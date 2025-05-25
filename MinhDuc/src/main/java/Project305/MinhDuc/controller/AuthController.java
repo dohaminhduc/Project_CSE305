@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import Project305.MinhDuc.model.User;
 import Project305.MinhDuc.repository.UserRepository;
 import Project305.MinhDuc.request.LoginRequest;
 import Project305.MinhDuc.service.AuthService;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        Optional<User> userOptional = userRepository.findByIdentityNumber(request.getIdentityNumber()); // ✅ Fixed
+        Optional<User> userOptional = userRepository.findByIdentityNumber(request.getIdentityNumber());
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -34,7 +36,7 @@ public class AuthController {
             if (user.getPassword().equals(request.getPassword())) { 
                 Map<String, Object> response = new HashMap<>();
                 response.put("status", "success");
-                response.put("role", user.getRole());
+                response.put("userType", user.getUserType());
                 return ResponseEntity.ok(response);
                 }
         }
@@ -47,8 +49,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
-        authService.register(username, password, role);
+    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password, @RequestParam String userType) {
+        authService.register(username, password, userType);
         return ResponseEntity.ok("User registered successfully");
     }
 }

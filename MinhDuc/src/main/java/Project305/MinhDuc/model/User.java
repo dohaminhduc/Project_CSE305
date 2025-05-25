@@ -9,13 +9,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Users")
-
-abstract class User {
+public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
-    @Column(name = "username", unique= true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -24,16 +23,43 @@ abstract class User {
     @Column(nullable = false)
     private String email;
 
-    public User() {}
+    @Column(nullable = false)
+    private UserType userType;
 
-    public User(long id, String username, String password, String email){
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+
+    public User() {
+    }
+
+    public User(String id, String username, String password, String email, UserType userType) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.userType = userType;
     }
 
-    public void setId(long id) {
+    public String getId() {
+        return id;
+    }
+
+    
+
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,8 +79,5 @@ abstract class User {
         return email;
     }
 
-    public long getID(){
-        return id;
-    }
-}
     
+}
