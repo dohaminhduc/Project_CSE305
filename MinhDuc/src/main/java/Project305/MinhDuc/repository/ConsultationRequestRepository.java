@@ -1,13 +1,10 @@
 package Project305.MinhDuc.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import Project305.MinhDuc.model.ConsultationRequest;
+import Project305.MinhDuc.model.Doctor;
 
-@Repository
 public interface ConsultationRequestRepository extends JpaRepository<ConsultationRequest, Long> {
-    List<ConsultationRequest> findByStatusAndRequestedTo(String status, String requestedTo);
+    List<ConsultationRequest> findByStatusAndDoctor(String status, Doctor doctor);
 }
