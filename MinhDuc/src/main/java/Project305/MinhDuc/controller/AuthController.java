@@ -1,19 +1,23 @@
 package Project305.MinhDuc.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import Project305.MinhDuc.model.User;
 import Project305.MinhDuc.repository.UserRepository;
 import Project305.MinhDuc.request.LoginRequest;
 import Project305.MinhDuc.service.AuthService;
-
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,8 +53,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password, @RequestParam String userType) {
-        authService.register(username, password, userType);
-        return ResponseEntity.ok("User registered successfully");
-    }
+public ResponseEntity<String> register(
+    @RequestParam String id,
+    @RequestParam String username,
+    @RequestParam String password,
+    @RequestParam String email,
+    @RequestParam String userType) {
+    authService.register(id, username, password, email, userType);
+    return ResponseEntity.ok("User registered successfully");
+}
 }

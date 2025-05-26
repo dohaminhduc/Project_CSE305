@@ -1,6 +1,6 @@
 package Project305.MinhDuc.model;
 
-enum UserType {
+public enum UserType {
   PATIENT,
   DOCTOR
 }

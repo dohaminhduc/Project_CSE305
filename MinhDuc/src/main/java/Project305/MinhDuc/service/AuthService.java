@@ -1,6 +1,5 @@
 package Project305.MinhDuc.service;
 
-import org.hibernate.usertype.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 import Project305.MinhDuc.model.Doctor;
 import Project305.MinhDuc.model.Patient;
 import Project305.MinhDuc.model.User;
+import Project305.MinhDuc.model.UserType;
 import Project305.MinhDuc.repository.UserRepository;
 
 @Service
