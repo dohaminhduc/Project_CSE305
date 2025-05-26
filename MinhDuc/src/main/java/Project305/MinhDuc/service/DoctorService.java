@@ -26,7 +26,6 @@ public class DoctorService {
     @Autowired
     private ConsultationRequestRepository consultationRequestRepository;
 
-   
     public List<Patient> getRegisteredPatients(Principal principal) {
         String username = principal.getName();
         Doctor doctor = doctorRepository.findByUsername(username);
@@ -36,11 +35,10 @@ public class DoctorService {
         return null;
     }
 
-   
     public void requestConsultationWithPatient(Long patientId, Principal principal) {
         String username = principal.getName();
         Doctor doctor = doctorRepository.findByUsername(username);
-        Patient patient = patientRepository.findById(patientId).orElse(null);
+        Patient patient = patientRepository.findById(patientId);
 
         if (doctor != null && patient != null) {
             ConsultationRequest request = new ConsultationRequest();

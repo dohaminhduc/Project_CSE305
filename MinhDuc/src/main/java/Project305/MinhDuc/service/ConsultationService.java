@@ -21,13 +21,13 @@ public class ConsultationService {
     @Autowired
     private DoctorRepository doctorRepository;
 
-    // Lấy tất cả yêu cầu "PENDING" dành cho bác sĩ hiện tại
+    
     public List<ConsultationRequest> getPendingRequests(Principal principal) {
         Doctor doctor = doctorRepository.findByUsername(principal.getName());
         return consultationRequestRepository.findByStatusAndDoctor("PENDING", doctor);
     }
 
-    // Chấp nhận yêu cầu
+    
     public boolean acceptRequest(Long id, Principal principal) {
         Doctor doctor = doctorRepository.findByUsername(principal.getName());
         Optional<ConsultationRequest> optionalRequest = consultationRequestRepository.findById(id);
@@ -47,7 +47,7 @@ public class ConsultationService {
         return false;
     }
 
-    // Từ chối yêu cầu
+    
     public boolean rejectRequest(Long id, Principal principal) {
         Doctor doctor = doctorRepository.findByUsername(principal.getName());
         Optional<ConsultationRequest> optionalRequest = consultationRequestRepository.findById(id);

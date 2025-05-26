@@ -1,5 +1,11 @@
 package Project305.MinhDuc.repository;
 
-public class DoctorRepository {
-    
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import Project305.MinhDuc.model.Doctor;
+
+@Repository
+public interface DoctorRepository extends JpaRepository<Doctor, String> {
+    Doctor findByUsername(String username);
 }
