@@ -43,7 +43,7 @@ public class PatientService {
         return null;
     }
 
-    // Gửi yêu cầu tư vấn tới bác sĩ
+
    public void requestConsultation(String doctorId, Principal principal) {
     String username = principal.getName();
     Patient patient = patientRepository.findByUsername(username);
@@ -59,24 +59,20 @@ public class PatientService {
     }
 }
 
-
-    // Xử lý thanh toán
     public void handlePayment(Principal principal) {
         String username = principal.getName();
         Patient patient = patientRepository.findByUsername(username);
         if (patient != null) {
-            // Xử lý logic thanh toán giả định
             patient.setPaymentStatus("PAID");
             patientRepository.save(patient);
         }
     }
 
-    // Tính tuổi bệnh nhân
     public int getAge(Principal principal) {
         String username = principal.getName();
         Patient patient = patientRepository.findByUsername(username);
-        if (patient != null && patient.getDateOfBirth() != null) {
-            return Period.between(patient.getDateOfBirth(), LocalDate.now()).getYears();
+        if (patient != null && patient.getDob() != null) {
+            return Period.between(patient.getDob(), LocalDate.now()).getYears();
         }
         return 0;
     }

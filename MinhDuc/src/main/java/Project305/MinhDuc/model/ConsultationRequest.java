@@ -31,7 +31,6 @@ public class ConsultationRequest {
 
     private LocalDateTime requestTime;
 
-    // Getters và Setters
 
     public Long getId() {
         return id;

@@ -11,7 +11,14 @@ import jakarta.persistence.Table;
 public class Patient extends User{
     private LocalDate dob;
     private ArrayList<HealthData> healthRecords;
+    private String paymentStatus;
 
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
     public LocalDate getDob() {
         return dob;
     }
