@@ -1,35 +1,35 @@
 package Project305.MinhDuc.model;
 
+import java.time.LocalDateTime; 
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Doctors")
+@PrimaryKeyJoinColumn(name = "id")
 public class Doctor extends User {
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Patient> listOfPatient;
+    @ManyToMany(mappedBy = "doctors", fetch = FetchType.LAZY)
+    private List<Patient> patients;
 
     public Doctor() {
-        super();
-        setUserType(UserType.DOCTOR);
+        super(); 
     }
 
-    public Doctor(String id, String username, String password, String email, List<Patient> listOfPatient) {
-        super(id, username, password, email, UserType.DOCTOR);
-        this.listOfPatient = listOfPatient;
+    public Doctor(String email, String password, String name) {
+        super(email, password, name, UserType.DOCTOR, LocalDateTime.now());
     }
 
-    public List<Patient> getListOfPatient() {
-        return listOfPatient;
+    public List<Patient> getPatients() {
+        return patients;
     }
 
-    public void setListOfPatient(List<Patient> listOfPatient) {
-        this.listOfPatient = listOfPatient;
+    public void setPatients(List<Patient> patients) {
+        this.patients = patients;
     }
 }

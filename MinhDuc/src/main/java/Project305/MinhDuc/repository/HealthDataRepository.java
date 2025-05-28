@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import Project305.MinhDuc.model.HealthData;
 
 @Repository
-public interface HealthDataRepository extends JpaRepository<HealthData, String> {
-    List<HealthData> findByPatientId(String patientId);
+public interface HealthDataRepository extends JpaRepository<HealthData, Long> {
+    List<HealthData> findByPatientId(Long patientId);
 
-    List<Object> findByUser(String patientId, String doctorId);
+    List<Object> findByUser(Long patientId, Long doctorId);
 }

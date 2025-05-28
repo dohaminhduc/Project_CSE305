@@ -2,7 +2,10 @@ package Project305.MinhDuc.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "consultation_requests")
+@Table(name = "ConsultationRequests")
 public class ConsultationRequest {
 
     @Id
@@ -27,11 +30,26 @@ public class ConsultationRequest {
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-    private String status; // PENDING, ACCEPTED, REJECTED
+    @Enumerated(EnumType.STRING) 
+    @Column(name = "status", nullable = false) 
+    private ConsultationStatus status; 
 
+    @Column(name = "request_time", nullable = false) 
     private LocalDateTime requestTime;
 
+    // Constructors
+    public ConsultationRequest() {
+        
+    }
 
+    public ConsultationRequest(Doctor doctor, Patient patient, LocalDateTime requestTime, ConsultationStatus status) {
+        this.doctor = doctor;
+        this.patient = patient;
+        this.requestTime = LocalDateTime.now(); 
+        this.status = ConsultationStatus.PENDING; 
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -56,11 +74,11 @@ public class ConsultationRequest {
         this.patient = patient;
     }
 
-    public String getStatus() {
+    public ConsultationStatus getStatus() { 
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ConsultationStatus status) { 
         this.status = status;
     }
 

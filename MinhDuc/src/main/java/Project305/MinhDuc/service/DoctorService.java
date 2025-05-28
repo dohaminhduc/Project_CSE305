@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import Project305.MinhDuc.model.ConsultationRequest;
+import Project305.MinhDuc.model.ConsultationStatus;
 import Project305.MinhDuc.model.Doctor;
 import Project305.MinhDuc.model.Patient;
 import Project305.MinhDuc.repository.ConsultationRequestRepository;
@@ -19,37 +19,44 @@ import Project305.MinhDuc.repository.PatientRepository;
 @Service
 public class DoctorService {
 
-    @Autowired
-    private PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final ConsultationRequestRepository consultationRequestRepository;
 
-    @Autowired
-    private DoctorRepository doctorRepository;
-
-    @Autowired
-    private ConsultationRequestRepository consultationRequestRepository;
+    public DoctorService(PatientRepository patientRepository, 
+                         DoctorRepository doctorRepository, 
+                         ConsultationRequestRepository consultationRequestRepository) {
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.consultationRequestRepository = consultationRequestRepository;
+    }
 
     public List<Patient> getRegisteredPatients(Principal principal) {
-        String username = principal.getName();
-        Doctor doctor = doctorRepository.findByUsername(username);
+        String doctorEmail = principal.getName();
+        Doctor doctor = doctorRepository.findByEmail(doctorEmail);
         if (doctor == null) {
             return Collections.emptyList();
         }
-        return patientRepository.findPatientsByDoctorId(doctor.getId());
+        return patientRepository.findByDoctorsId(doctor.getId());
     }
 
-    public void requestConsultationWithPatient(String patientId, Principal principal) {
-        String username = principal.getName();
-        Doctor doctor = doctorRepository.findByUsername(username);
-        Optional<Patient> patient = patientRepository.findById(patientId);
+    public void requestConsultationWithPatient(Long patientId, Principal principal) {
+        String doctorEmail = principal.getName();
+        Doctor doctor = doctorRepository.findByEmail(doctorEmail);
 
-        if (doctor == null || !patient.isPresent()) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+
+        if (doctor == null || !patientOptional.isPresent()) {
+            System.out.println("Doctor or Patient not found. Cannot create consultation request.");
             return;
         }
 
+        Patient patient = patientOptional.get();
+
         ConsultationRequest request = new ConsultationRequest();
         request.setDoctor(doctor);
-        request.setPatient(patient.get()); 
-        request.setStatus("PENDING");
+        request.setPatient(patient);
+        request.setStatus(ConsultationStatus.PENDING);
         request.setRequestTime(LocalDateTime.now());
 
         consultationRequestRepository.save(request);

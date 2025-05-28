@@ -17,34 +17,33 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public void register(String id, String username, String password, String email, String userType) {
-    User user;
+    public void register(String username, String password, String email, String userType) {
+        User user;
 
-    if (userType.equalsIgnoreCase("DOCTOR")) {
-        user = new Doctor();
-    } else if (userType.equalsIgnoreCase("PATIENT")) {
-        user = new Patient();
-    } else {
-        throw new IllegalArgumentException("Invalid user type: " + userType);
-    }
-
-    user.setId(id);
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setEmail(email);
-    user.setUserType(UserType.valueOf(userType.toUpperCase()));
-    userRepository.save(user);
-}
-
-
-    public User authenticate(String id, String password) {
-        User user = userRepository.findByIdentityNumber(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        if (!user.getPassword().equals(password)) {
-            throw new BadCredentialsException("Invalid credentials");
+        if (userType.equalsIgnoreCase("DOCTOR")) {
+            user = new Doctor(username, password, email);
+        } else if (userType.equalsIgnoreCase("PATIENT")) {
+            user = new Patient(username, password, email, java.time.LocalDate.now());
+        } else {
+            throw new IllegalArgumentException("Invalid user type: " + userType);
         }
 
-        return user;
+        user.setName(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setUserType(Enum.valueOf(UserType.class, userType.toUpperCase()));
+        userRepository.save(user);
     }
+
+    public User authenticate(Long id, String password) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    if (!user.getPassword().equals(password)) {
+                        throw new BadCredentialsException("Invalid credentials");
+                    }
+                    return user;
+                })
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
 }

@@ -28,7 +28,7 @@ public class PatientController {
     }
 
     @PostMapping("/request-doctor/{doctorId}")
-    public ResponseEntity<String> requestConsult(@PathVariable String doctorId, Principal principal) {
+    public ResponseEntity<String> requestConsult(@PathVariable Long doctorId, Principal principal) {
         patientService.requestConsultation(doctorId, principal);
         return ResponseEntity.ok("Request sent.");
     }

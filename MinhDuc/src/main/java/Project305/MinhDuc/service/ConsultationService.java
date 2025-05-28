@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import Project305.MinhDuc.model.ConsultationRequest;
+import Project305.MinhDuc.model.ConsultationStatus;
 import Project305.MinhDuc.model.Doctor;
 import Project305.MinhDuc.repository.ConsultationRequestRepository;
 import Project305.MinhDuc.repository.DoctorRepository;
@@ -23,23 +24,23 @@ public class ConsultationService {
 
     
     public List<ConsultationRequest> getPendingRequests(Principal principal) {
-        Doctor doctor = doctorRepository.findByUsername(principal.getName());
-        return consultationRequestRepository.findByStatusAndDoctor("PENDING", doctor);
+        Doctor doctor = doctorRepository.findByEmail(principal.getName());
+        return consultationRequestRepository.findByStatusAndDoctor(ConsultationStatus.PENDING, doctor);
     }
 
     
     public boolean acceptRequest(Long id, Principal principal) {
-        Doctor doctor = doctorRepository.findByUsername(principal.getName());
+        Doctor doctor = doctorRepository.findByEmail(principal.getName());
         Optional<ConsultationRequest> optionalRequest = consultationRequestRepository.findById(id);
 
         if (optionalRequest.isPresent()) {
             ConsultationRequest request = optionalRequest.get();
 
-            if (!request.getDoctor().equals(doctor) || !"PENDING".equals(request.getStatus())) {
+            if (!request.getDoctor().equals(doctor) || !ConsultationStatus.PENDING.equals(request.getStatus())) {
                 return false;
             }
 
-            request.setStatus("ACCEPTED");
+            request.setStatus(ConsultationStatus.ACCEPTED);
             consultationRequestRepository.save(request);
             return true;
         }
@@ -49,17 +50,17 @@ public class ConsultationService {
 
     
     public boolean rejectRequest(Long id, Principal principal) {
-        Doctor doctor = doctorRepository.findByUsername(principal.getName());
+        Doctor doctor = doctorRepository.findByEmail(principal.getName());
         Optional<ConsultationRequest> optionalRequest = consultationRequestRepository.findById(id);
 
         if (optionalRequest.isPresent()) {
             ConsultationRequest request = optionalRequest.get();
 
-            if (!request.getDoctor().equals(doctor) || !"PENDING".equals(request.getStatus())) {
+            if (!request.getDoctor().equals(doctor) || !ConsultationStatus.PENDING.equals(request.getStatus())) {
                 return false;
             }
 
-            request.setStatus("REJECTED");
+            request.setStatus(ConsultationStatus.REJECTED);
             consultationRequestRepository.save(request);
             return true;
         }

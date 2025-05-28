@@ -18,6 +18,7 @@ import Project305.MinhDuc.model.User;
 import Project305.MinhDuc.repository.UserRepository;
 import Project305.MinhDuc.request.LoginRequest;
 import Project305.MinhDuc.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,35 +32,41 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        Optional<User> userOptional = userRepository.findByIdentityNumber(request.getIdentityNumber());
+public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    Long id = request.getIdentityNumber(); 
+    Optional<User> userOpt = userRepository.findById(id);
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            if (user.getPassword().equals(request.getPassword())) { 
-                Map<String, Object> response = new HashMap<>();
-                response.put("status", "success");
-                response.put("userType", user.getUserType());
-                return ResponseEntity.ok(response);
-                }
+    if (userOpt.isPresent()) {
+        User user = userOpt.get();
+        if (user.getPassword().equals(request.getPassword())) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("userType", user.getUserType());
+            return ResponseEntity.ok(response);
         }
-
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("status", "error");
-        errorResponse.put("message", "Invalid identity number or password");
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
-    @PostMapping("/register")
-public ResponseEntity<String> register(
-    @RequestParam String id,
-    @RequestParam String username,
-    @RequestParam String password,
-    @RequestParam String email,
-    @RequestParam String userType) {
-    authService.register(id, username, password, email, userType);
-    return ResponseEntity.ok("User registered successfully");
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("status", "error");
+    errorResponse.put("message", "Invalid identity number or password");
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
 }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String email,
+            @RequestParam String userType) {
+        authService.register(username, password, email, userType);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("User logged out successfully");
+    }
 }
