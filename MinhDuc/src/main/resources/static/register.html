@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            margin: 20px auto;
+        }
+        
+        .nav-tabs {
+            border: none;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: #667eea;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .role-selector {
+            margin-bottom: 30px;
+        }
+        
+        .role-btn {
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            padding: 15px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        
+        .role-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .role-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .logo h2 {
+            color: #333;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        
+        .doctor-fields, .patient-fields {
+            display: none;
+        }
+        
+        .doctor-fields.show, .patient-fields.show {
+            display: block;
+        }
+        
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.875rem;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .strength-weak { background: #dc3545; }
+        .strength-fair { background: #fd7e14; }
+        .strength-good { background: #ffc107; }
+        .strength-strong { background: #198754; }
+        
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-heartbeat me-2"></i>HealthCare Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="register.html">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="register-container">
+                    <div class="logo">
+                        <i class="fas fa-user-plus"></i>
+                        <h2>Create Account</h2>
+                        <p class="text-muted mb-0">Join our healthcare community</p>
+                    </div>
+                    
+                    <form id="registerForm">
+                        <!-- Role Selection -->
+                        <div class="role-selector">
+                            <h5 class="text-center mb-3">I am registering as a:</h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <button type="button" class="role-btn w-100" data-role="doctor">
+                                        <i class="fas fa-user-md"></i>
+                                        Doctor
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="role-btn w-100" data-role="patient">
+                                        <i class="fas fa-user"></i>
+                                        Patient
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Common Fields -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+                                    <label for="firstName"><i class="fas fa-user me-2"></i>First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+                                    <label for="lastName"><i class="fas fa-user me-2"></i>Last Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                            <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="tel" class="form-control" id="phone" placeholder="Phone Number" required>
+                                    <label for="phone"><i class="fas fa-phone me-2"></i>Phone Number</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" id="dateOfBirth" required>
+                                    <label for="dateOfBirth"><i class="fas fa-calendar me-2"></i>Date of Birth</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="gender" required>
+                                <option value="">Choose...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                            <label for="gender"><i class="fas fa-venus-mars me-2"></i>Gender</label>
+                        </div>
+                        
+                        <!-- Doctor Specific Fields -->
+                        <div class="doctor-fields">
+                            <h5 class="mb-3 text-primary"><i class="fas fa-user-md me-2"></i>Professional Information</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="licenseNumber" placeholder="Medical License Number">
+                                        <label for="licenseNumber"><i class="fas fa-id-card me-2"></i>License Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="specialization">
+                                            <option value="">Choose Specialization...</option>
+                                            <option value="general">General Practice</option>
+                                            <option value="cardiology">Cardiology</option>
+                                            <option value="dermatology">Dermatology</option>
+                                            <option value="neurology">Neurology</option>
+                                            <option value="pediatrics">Pediatrics</option>
+                                            <option value="psychiatry">Psychiatry</option>
+                                            <option value="surgery">Surgery</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <label for="specialization"><i class="fas fa-stethoscope me-2"></i>Specialization</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="hospital" placeholder="Hospital/Clinic Name">
+                                <label for="hospital"><i class="fas fa-hospital me-2"></i>Hospital/Clinic</label>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="experience" placeholder="Years of Experience" min="0">
+                                <label for="experience"><i class="fas fa-calendar-alt me-2"></i>Years of Experience</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Patient Specific Fields -->
+                        <div class="patient-fields">
+                            <h5 class="mb-3 text-success"><i class="fas fa-user me-2"></i>Medical Information</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="bloodType">
+                                            <option value="">Choose Blood Type...</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                        </select>
+                                        <label for="bloodType"><i class="fas fa-tint me-2"></i>Blood Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="emergencyContact" placeholder="Emergency Contact">
+                                        <label for="emergencyContact"><i class="fas fa-phone-alt me-2"></i>Emergency Contact</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="allergies" placeholder="Known Allergies" style="height: 80px"></textarea>
+                                <label for="allergies"><i class="fas fa-exclamation-triangle me-2"></i>Known Allergies</label>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="medicalHistory" placeholder="Medical History" style="height: 80px"></textarea>
+                                <label for="medicalHistory"><i class="fas fa-notes-medical me-2"></i>Medical History</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Information -->
+                        <h5 class="mb-3 text-info"><i class="fas fa-map-marker-alt me-2"></i>Address Information</h5>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="address" placeholder="Street Address" required>
+                            <label for="address"><i class="fas fa-home me-2"></i>Street Address</label>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="city" placeholder="City" required>
+                                    <label for="city"><i class="fas fa-city me-2"></i>City</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="state" placeholder="State/Province" required>
+                                    <label for="state"><i class="fas fa-map me-2"></i>State/Province</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="zipCode" placeholder="ZIP/Postal Code" required>
+                                    <label for="zipCode"><i class="fas fa-mail-bulk me-2"></i>ZIP Code</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Fields -->
+                        <h5 class="mb-3 text-warning"><i class="fas fa-lock me-2"></i>Security</h5>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <small id="strengthText" class="text-muted">Password strength will appear here</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+                            <label for="confirmPassword"><i class="fas fa-lock me-2"></i>Confirm Password</label>
+                            <div id="passwordMatch" class="mt-2"></div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and 
+                                <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                Subscribe to healthcare newsletters and updates
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-register w-100 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="text-muted mb-0">Already have an account?</p>
+                            <a href="login.html" class="btn btn-outline-primary mt-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </a>
+                        </div>
+                    </form>
+                    
+                    <!-- Alert for role selection -->
+                    <div id="roleAlert" class="alert alert-warning mt-3" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Please select your role (Doctor or Patient) before creating an account.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedRole = null;
+        
+        // Role selection functionality
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                selectedRole = this.dataset.role;
+                
+                // Show/hide role-specific fields
+                document.querySelectorAll('.doctor-fields, .patient-fields').forEach(field => {
+                    field.classList.remove('show');
+                });
+                
+                if (selectedRole) {
+                    document.querySelector(`.${selectedRole}-fields`).classList.add('show');
+                }
+                
+                document.getElementById('roleAlert').style.display = 'none';
+            });
+        });
+        
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = [];
+            
+            if (password.length >= 8) strength += 1;
+            else feedback.push('at least 8 characters');
+            
+            if (/[a-z]/.test(password)) strength += 1;
+            else feedback.push('lowercase letter');
+            
+            if (/[A-Z]/.test(password)) strength += 1;
+            else feedback.push('uppercase letter');
+            
+            if (/[0-9]/.test(password)) strength += 1;
+            else feedback.push('number');
+            
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            else feedback.push('special character');
+            
+            return { strength, feedback };
+        }
+        
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const { strength, feedback } = checkPasswordStrength(password);
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            const percentage = (strength / 5) * 100;
+            strengthFill.style.width = percentage + '%';
+            
+            // Remove all strength classes
+            strengthFill.className = 'strength-fill';
+            
+            if (strength <= 1) {
+                strengthFill.classList.add('strength-weak');
+                strengthText.textContent = 'Weak - Add: ' + feedback.join(', ');
+                strengthText.className = 'text-danger';
+            } else if (strength <= 2) {
+                strengthFill.classList.add('strength-fair');
+                strengthText.textContent = 'Fair - Add: ' + feedback.join(', ');
+                strengthText.className = 'text-warning';
+            } else if (strength <= 3) {
+                strengthFill.classList.add('strength-good');
+                strengthText.textContent = 'Good - Add: ' + feedback.join(', ');
+                strengthText.className = 'text-info';
+            } else {
+                strengthFill.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password!';
+                strengthText.className = 'text-success';
+            }
+        });
+        
+        // Password confirmation checker
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    matchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check me-1"></i>Passwords match</small>';
+                } else {
+                    matchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times me-1"></i>Passwords do not match</small>';
+                }
+            } else {
+                matchDiv.innerHTML = '';
+            }
+        });
+        
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedRole) {
+                document.getElementById('roleAlert').style.display = 'block';
+                return;
+            }
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                role: selectedRole,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                dateOfBirth: document.getElementById('dateOfBirth').value,
+                gender: document.getElementById('gender').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipCode: document.getElementById('zipCode').value
+            };
+            
+            // Add role-specific data
+            if (selectedRole === 'doctor') {
+                formData.licenseNumber = document.getElementById('licenseNumber').value;
+                formData.specialization = document.getElementById('specialization').value;
+                formData.hospital = document.getElementById('hospital').value;
+                formData.experience = document.getElementById('experience').value;
+            } else if (selectedRole === 'patient') {
+                formData.bloodType = document.getElementById('bloodType').value;
+                formData.emergencyContact = document.getElementById('emergencyContact').value;
+                formData.allergies = document.getElementById('allergies').value;
+                formData.medicalHistory = document.getElementById('medicalHistory').value;
+            }
+            
+            console.log('Registration data:', formData);
+            alert(`Registration successful as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}!\nWelcome, ${formData.firstName} ${formData.lastName}!`);
+        });
+    </script>
+</body>
+</html>

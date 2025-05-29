@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển bác sĩ</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            min-height: 100vh;
+        }
+        .patient-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .patient-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .health-metric {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+        }
+        .status-pending {
+            color: #ffc107;
+        }
+        .status-completed {
+            color: #28a745;
+        }
+        .vital-normal {
+            color: #28a745;
+        }
+        .vital-warning {
+            color: #ffc107;
+        }
+        .vital-danger {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <div class="d-flex flex-column">
+                    <h5 class="text-center mb-4">
+                        <i class="fas fa-user-md"></i> Doctor Panel
+                    </h5>
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link active" href="#" onclick="showConsultationRequests()">
+                                <i class="fas fa-clipboard-list"></i> Yêu cầu tư vấn
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="#" onclick="showPatientHealth()">
+                                <i class="fas fa-heartbeat"></i> Dữ liệu sức khỏe
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="#" onclick="showStatistics()">
+                                <i class="fas fa-chart-bar"></i> Thống kê
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 id="page-title">Yêu cầu tư vấn</h2>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">Xin chào, <strong>BS. Nguyễn Văn A</strong></span>
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Consultation Requests Section -->
+                <div id="consultation-section">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Tìm kiếm bệnh nhân..." id="searchPatient">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="statusFilter">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="pending">Chờ xử lý</option>
+                                <option value="completed">Đã hoàn thành</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary" onclick="filterPatients()">
+                                <i class="fas fa-search"></i> Lọc
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row" id="patient-list">
+                        <!-- Patient cards will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Patient Health Section -->
+                <div id="health-section" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select class="form-select mb-3" id="patientSelect" onchange="loadPatientHealth()">
+                                <option value="">Chọn bệnh nhân...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="health-data" style="display: none;">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card health-metric">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Nhiệt độ cơ thể</h6>
+                                        <h3 id="temperature" class="vital-normal">36.5°C</h3>
+                                        <small class="text-muted">Cập nhật: 2 giờ trước</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card health-metric">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Nhịp tim</h6>
+                                        <h3 id="heartRate" class="vital-normal">72 BPM</h3>
+                                        <small class="text-muted">Cập nhật: 1 giờ trước</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card health-metric">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Huyết áp</h6>
+                                        <h3 id="bloodPressure" class="vital-normal">120/80</h3>
+                                        <small class="text-muted">Cập nhật: 30 phút trước</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Lịch sử dữ liệu sức khỏe</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Thời gian</th>
+                                                <th>Nhiệt độ</th>
+                                                <th>Nhịp tim</th>
+                                                <th>Huyết áp</th>
+                                                <th>Ghi chú</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="health-history">
+                                            <!-- Health history will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div id="statistics-section" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary">Tổng bệnh nhân</h5>
+                                    <h2>156</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-warning">Chờ tư vấn</h5>
+                                    <h2>12</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">Hoàn thành hôm nay</h5>
+                                    <h2>8</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title text-info">Trung bình/ngày</h5>
+                                    <h2>15</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Detail Modal -->
+    <div class="modal fade" id="patientModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thông tin bệnh nhân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Patient details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="completeConsultation()">
+                        Hoàn thành tư vấn
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data
+        const patients = [
+            {
+                id: 1,
+                name: "Nguyễn Thị Mai",
+                age: 35,
+                phone: "0912345678",
+                request: "Đau đầu kéo dài 3 ngày, kèm theo sốt nhẹ",
+                status: "pending",
+                requestDate: "2024-05-29 08:30",
+                healthData: {
+                    temperature: 37.2,
+                    heartRate: 85,
+                    bloodPressure: "130/90",
+                    history: [
+                        {date: "2024-05-29 08:00", temp: 37.2, hr: 85, bp: "130/90", note: "Sốt nhẹ"},
+                        {date: "2024-05-28 20:00", temp: 36.8, hr: 78, bp: "125/85", note: "Bình thường"},
+                        {date: "2024-05-28 12:00", temp: 36.5, hr: 72, bp: "120/80", note: "Ổn định"}
+                    ]
+                }
+            },
+            {
+                id: 2,
+                name: "Trần Văn Hùng",
+                age: 42,
+                phone: "0987654321",
+                request: "Khó thở, đau ngực khi hoạt động",
+                status: "pending",
+                requestDate: "2024-05-29 09:15",
+                healthData: {
+                    temperature: 36.5,
+                    heartRate: 95,
+                    bloodPressure: "140/95",
+                    history: [
+                        {date: "2024-05-29 09:00", temp: 36.5, hr: 95, bp: "140/95", note: "Huyết áp cao"},
+                        {date: "2024-05-28 19:00", temp: 36.7, hr: 88, bp: "135/90", note: "Nhịp tim nhanh"},
+                        {date: "2024-05-28 11:00", temp: 36.4, hr: 82, bp: "128/85", note: "Ổn định"}
+                    ]
+                }
+            },
+            {
+                id: 3,
+                name: "Lê Thị Hoa",
+                age: 28,
+                phone: "0901234567",
+                request: "Đau bụng dưới, buồn nôn",
+                status: "completed",
+                requestDate: "2024-05-28 14:20",
+                healthData: {
+                    temperature: 36.3,
+                    heartRate: 68,
+                    bloodPressure: "110/70",
+                    history: [
+                        {date: "2024-05-29 07:00", temp: 36.3, hr: 68, bp: "110/70", note: "Đã khỏi"},
+                        {date: "2024-05-28 16:00", temp: 36.8, hr: 75, bp: "115/75", note: "Cải thiện"},
+                        {date: "2024-05-28 10:00", temp: 37.0, hr: 82, bp: "120/78", note: "Đau bụng"}
+                    ]
+                }
+            }
+        ];
+
+        let currentPatientId = null;
+        let filteredPatients = [...patients];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            showConsultationRequests();
+            populatePatientSelect();
+        });
+
+        function showConsultationRequests() {
+            document.getElementById('page-title').textContent = 'Yêu cầu tư vấn';
+            document.getElementById('consultation-section').style.display = 'block';
+            document.getElementById('health-section').style.display = 'none';
+            document.getElementById('statistics-section').style.display = 'none';
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            displayPatients(filteredPatients);
+        }
+
+        function showPatientHealth() {
+            document.getElementById('page-title').textContent = 'Dữ liệu sức khỏe bệnh nhân';
+            document.getElementById('consultation-section').style.display = 'none';
+            document.getElementById('health-section').style.display = 'block';
+            document.getElementById('statistics-section').style.display = 'none';
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function showStatistics() {
+            document.getElementById('page-title').textContent = 'Thống kê';
+            document.getElementById('consultation-section').style.display = 'none';
+            document.getElementById('health-section').style.display = 'none';
+            document.getElementById('statistics-section').style.display = 'block';
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function displayPatients(patientList) {
+            const container = document.getElementById('patient-list');
+            container.innerHTML = '';
+
+            patientList.forEach(patient => {
+                const statusClass = patient.status === 'pending' ? 'status-pending' : 'status-completed';
+                const statusText = patient.status === 'pending' ? 'Chờ xử lý' : 'Đã hoàn thành';
+                
+                const patientCard = `
+                    <div class="col-md-6 mb-3">
+                        <div class="card patient-card" onclick="openPatientModal(${patient.id})">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">${patient.name}</h6>
+                                        <p class="text-muted mb-1">Tuổi: ${patient.age} | SĐT: ${patient.phone}</p>
+                                        <p class="card-text">${patient.request}</p>
+                                        <small class="text-muted">Yêu cầu lúc: ${patient.requestDate}</small>
+                                    </div>
+                                    <span class="badge ${statusClass}">${statusText}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += patientCard;
+            });
+        }
+
+        function filterPatients() {
+            const searchTerm = document.getElementById('searchPatient').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredPatients = patients.filter(patient => {
+                const matchesSearch = patient.name.toLowerCase().includes(searchTerm) || 
+                                    patient.request.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || patient.status === statusFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+
+            displayPatients(filteredPatients);
+        }
+
+        function openPatientModal(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            currentPatientId = patientId;
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Thông tin cá nhân</h6>
+                        <p><strong>Họ tên:</strong> ${patient.name}</p>
+                        <p><strong>Tuổi:</strong> ${patient.age}</p>
+                        <p><strong>Số điện thoại:</strong> ${patient.phone}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Dữ liệu sức khỏe hiện tại</h6>
+                        <p><strong>Nhiệt độ:</strong> ${patient.healthData.temperature}°C</p>
+                        <p><strong>Nhịp tim:</strong> ${patient.healthData.heartRate} BPM</p>
+                        <p><strong>Huyết áp:</strong> ${patient.healthData.bloodPressure} mmHg</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Yêu cầu tư vấn</h6>
+                <p>${patient.request}</p>
+                <p><small class="text-muted">Gửi lúc: ${patient.requestDate}</small></p>
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label">Phản hồi của bác sĩ:</label>
+                    <textarea class="form-control" rows="4" placeholder="Nhập phản hồi tư vấn..."></textarea>
+                </div>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('patientModal')).show();
+        }
+
+        function completeConsultation() {
+            if (currentPatientId) {
+                const patient = patients.find(p => p.id === currentPatientId);
+                patient.status = 'completed';
+                
+                // Close modal and refresh display
+                bootstrap.Modal.getInstance(document.getElementById('patientModal')).hide();
+                displayPatients(filteredPatients);
+                
+                // Show success message
+                alert('Đã hoàn thành tư vấn cho bệnh nhân!');
+            }
+        }
+
+        function populatePatientSelect() {
+            const select = document.getElementById('patientSelect');
+            patients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id;
+                option.textContent = `${patient.name} (${patient.age} tuổi)`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadPatientHealth() {
+            const patientId = parseInt(document.getElementById('patientSelect').value);
+            if (!patientId) {
+                document.getElementById('health-data').style.display = 'none';
+                return;
+            }
+
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+
+            // Update current vitals
+            document.getElementById('temperature').textContent = `${patient.healthData.temperature}°C`;
+            document.getElementById('heartRate').textContent = `${patient.healthData.heartRate} BPM`;
+            document.getElementById('bloodPressure').textContent = `${patient.healthData.bloodPressure}`;
+
+            // Update vital signs colors based on values
+            updateVitalColors(patient.healthData);
+
+            // Update history table
+            const historyTable = document.getElementById('health-history');
+            historyTable.innerHTML = '';
+            
+            patient.healthData.history.forEach(record => {
+                const row = `
+                    <tr>
+                        <td>${record.date}</td>
+                        <td>${record.temp}°C</td>
+                        <td>${record.hr} BPM</td>
+                        <td>${record.bp}</td>
+                        <td>${record.note}</td>
+                    </tr>
+                `;
+                historyTable.innerHTML += row;
+            });
+
+            document.getElementById('health-data').style.display = 'block';
+        }
+
+        function updateVitalColors(healthData) {
+            // Temperature
+            const tempElement = document.getElementById('temperature');
+            if (healthData.temperature > 37.5) {
+                tempElement.className = 'vital-danger';
+            } else if (healthData.temperature > 37.0) {
+                tempElement.className = 'vital-warning';
+            } else {
+                tempElement.className = 'vital-normal';
+            }
+
+            // Heart Rate
+            const hrElement = document.getElementById('heartRate');
+            if (healthData.heartRate > 100 || healthData.heartRate < 60) {
+                hrElement.className = 'vital-warning';
+            } else {
+                hrElement.className = 'vital-normal';
+            }
+
+            // Blood Pressure
+            const bpElement = document.getElementById('bloodPressure');
+            const systolic = parseInt(healthData.bloodPressure.split('/')[0]);
+            if (systolic > 140) {
+                bpElement.className = 'vital-danger';
+            } else if (systolic > 130) {
+                bpElement.className = 'vital-warning';
+            } else {
+                bpElement.className = 'vital-normal';
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchPatient').addEventListener('input', filterPatients);
+    </script>
+</body>
+</html>

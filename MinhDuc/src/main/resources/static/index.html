@@ -1,11 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Healthcare Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+        }
+
+        .role-selector {
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            padding: 15px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .role-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .role-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .logo h2 {
+            color: #333;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-floating {
+            margin-bottom: 20px;
+        }
+
+        .role-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.875rem;
+            color: #6c757d;
+            display: none;
+        }
+
+        .role-info.show {
+            display: block;
+        }
+    </style>
 </head>
+
 <body>
-    <h3>Nhin con cac gi ???????</h3>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="login-container">
+                    <div class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <h2>HealthCare Portal</h2>
+                        <p class="text-muted mb-0">Secure Login System</p>
+                    </div>
+
+                    <form id="loginForm">
+                        <!-- Role Selection -->
+                        <div class="role-selector">
+                            <h5 class="text-center mb-3">Select Your Role</h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <button type="button" class="role-btn w-100" data-role="doctor">
+                                        <i class="fas fa-user-md"></i>
+                                        Doctor
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="role-btn w-100" data-role="patient">
+                                        <i class="fas fa-user"></i>
+                                        Patient
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Role Information -->
+                            <div id="doctorInfo" class="role-info">
+                                <i class="fas fa-info-circle"></i>
+                                Access patient records, manage appointments, and update medical information.
+                            </div>
+                            <div id="patientInfo" class="role-info">
+                                <i class="fas fa-info-circle"></i>
+                                View your medical records, book appointments, and communicate with healthcare providers.
+                            </div>
+                        </div>
+
+                        <!-- Login Form -->
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                            <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </button>
+
+                        <div class="text-center">
+                            <a href="#" class="text-decoration-none me-3">Forgot Password?</a>
+                            <span class="text-muted">|</span>
+                            <a href="register.html" class="text-decoration-none ms-3">Create Account</a>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-0">Don't have an account?</p>
+                            <a href="register.html" class="btn btn-outline-primary mt-2">
+                                <i class="fas fa-user-plus me-2"></i>Register Now
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Alert for role selection -->
+                    <div id="roleAlert" class="alert alert-warning mt-3" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Please select your role (Doctor or Patient) before signing in.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedRole = null;
+
+        // Role selection functionality
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                // Remove active class from all buttons
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                // Store selected role
+                selectedRole = this.dataset.role;
+
+                // Hide all role info divs
+                document.querySelectorAll('.role-info').forEach(info => info.classList.remove('show'));
+
+                // Show relevant role info
+                document.getElementById(selectedRole + 'Info').classList.add('show');
+
+                // Hide role alert if visible
+                document.getElementById('roleAlert').style.display = 'none';
+            });
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (!selectedRole) {
+                document.getElementById('roleAlert').style.display = 'block';
+                return;
+            }
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Simulate login process
+            console.log('Login attempt:', {
+                role: selectedRole,
+                email: email,
+                password: password
+            });
+
+            if (selectedRole === 'doctor') {
+                window.location.href = 'doctor.html';
+            } else {
+                window.location.href = 'patient.html';
+            }
+            alert(`Login successful as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}!\nEmail: ${email}`);
+        });
+
+        // Add floating label animation
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function () {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
