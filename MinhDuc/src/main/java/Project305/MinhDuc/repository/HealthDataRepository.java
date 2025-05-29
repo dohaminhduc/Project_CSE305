@@ -10,6 +10,5 @@ import Project305.MinhDuc.model.HealthData;
 @Repository
 public interface HealthDataRepository extends JpaRepository<HealthData, Long> {
     List<HealthData> findByPatientId(Long patientId);
-
-    List<Object> findByUser(Long patientId, Long doctorId);
+    List<HealthData> findByPatient_IdAndPatient_Doctors_Id(Long patientId, Long doctorId);
 }
