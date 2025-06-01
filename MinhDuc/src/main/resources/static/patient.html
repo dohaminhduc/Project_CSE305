@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng điều khiển bệnh nhân</title>
+    <title> Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -438,6 +438,10 @@
                             <label class="form-label">Chọn Bác sĩ</label>
                             <select class="form-select" id="doctorSelect" required>
                                 <option value="">Chọn bác sĩ...</option>
+                                <option value="">Dr. Nguyễn Đình Thiện</option>
+                                <option value="">Dr. Nguyễn Trọng Lưu</option>
+                                <option value="">Dr. Lê Minh Trí</option>
+                                <option value="">Dr. Trần Bình Trọng</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -475,7 +479,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="submitConsultation()">Gửi yêu cầu</button>
+                    <button type="button" class="btn btn-primary" onclick="sendConsultationRequest()">Gửi yêu
+                        cầu</button>
                 </div>
             </div>
         </div>
@@ -612,8 +617,8 @@
 
             if (res.ok) {
                 alert('Yêu cầu tư vấn đã được gửi thành công!');
-                await updateConsultationHistory(currentPatientId); // Cập nhật lịch sử
-                await populateDoctors(); // Làm mới danh sách bác sĩ (nếu muốn cập nhật giao diện)
+                await updateConsultationHistory(currentPatientId);
+                await populateDoctors();
             } else {
                 alert('Lỗi khi gửi yêu cầu tư vấn.');
             }
@@ -641,10 +646,14 @@
 
         function getStatusColor(status) {
             switch (status) {
-                case 'PENDING': return 'warning';
-                case 'ACCEPTED': return 'success';
-                case 'REJECTED': return 'danger';
-                default: return 'secondary';
+                case 'Hoàn thành':
+                    return 'success';
+                case 'Đang chờ':
+                    return 'warning';
+                case 'Đã hủy':
+                    return 'danger';
+                default:
+                    return 'secondary';
             }
         }
 
@@ -654,6 +663,8 @@
                 window.location.href = 'login.html';
             }
         }
+
+
     </script>
 
 </body>
