@@ -7,666 +7,123 @@
     <title> Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-
-        .main-content {
-            background-color: #fff;
-            min-height: 100vh;
-        }
-
-        .health-card {
-            transition: transform 0.2s;
-            border-left: 4px solid #007bff;
-        }
-
-        .health-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .vital-normal {
-            color: #28a745;
-        }
-
-        .vital-warning {
-            color: #ffc107;
-        }
-
-        .vital-danger {
-            color: #dc3545;
-        }
-
-        .doctor-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .doctor-card:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .consultation-history {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .payment-card {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            color: white;
-        }
-
-        .status-pending {
-            color: #ffc107;
-        }
-
-        .status-completed {
-            color: #28a745;
-        }
-    </style>
+    <link rel="stylesheet" href="patient.css">
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-hospital"></i> Cổng MediCare</a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text me-3">Xin chào, <span id="patient-name">Nguyễn Thị Mai</span></span>
-                <button class="btn btn-outline-light btn-sm" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                </button>
-            </div>
-        </div>
-    </nav>
-
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3">
-                <div class="d-flex flex-column">
-                    <div class="text-center mb-4">
-                        <img src="https://via.placeholder.com/80x80/ffffff/6c757d?text=NTM" class="rounded-circle mb-2"
-                            alt="Hồ sơ">
-                        <h6 id="sidebar-patient-name">Nguyễn Thị Mai</h6>
-                        <small>Mã bệnh nhân: #12345</small>
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="d-flex flex-column align-items-center mb-4">
+                        <img src="https://via.placeholder.com/80" alt="Patient Avatar" class="rounded-circle mb-3">
+                        <h5 class="mb-0" id="patientNameDisplay">Bệnh nhân</h5>
+                        <small class="text-muted">Patient</small>
                     </div>
-
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item mb-2">
-                            <a class="nav-link active" href="#dashboard" onclick="showSection('dashboard')">
-                                <i class="fas fa-tachometer-alt"></i> Tổng quan
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">
+                                <i class="fas fa-home"></i>
+                                Tổng quan
                             </a>
                         </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link" href="#health-status" onclick="showSection('health-status')">
-                                <i class="fas fa-heartbeat"></i> Tình trạng sức khỏe
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link" href="#consultations" onclick="showSection('consultations')">
-                                <i class="fas fa-clipboard-list"></i> Tư vấn
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a class="nav-link" href="#payments" onclick="showSection('payments')">
-                                <i class="fas fa-credit-card"></i> Thanh toán
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Đăng xuất
                             </a>
                         </li>
                     </ul>
                 </div>
-            </div>
+            </nav>
 
-            <!-- Main Content -->
-            <div class="col-md-10 main-content p-4">
-                <!-- Dashboard Section -->
-                <div id="dashboard" class="content-section">
-                    <h2 class="mb-4">Tổng quan</h2>
-                    <div class="row mb-4">
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h4 id="total-consultations">0</h4>
-                                            <small>Tổng số lần tư vấn</small>
-                                        </div>
-                                        <i class="fas fa-clipboard-list fs-2 opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-success text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h4 id="health-status">Tốt</h4>
-                                            <small>Tình trạng sức khỏe</small>
-                                        </div>
-                                        <i class="fas fa-heartbeat fs-2 opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h4 id="pending-bills">0</h4>
-                                            <small>Hóa đơn chưa thanh toán</small>
-                                        </div>
-                                        <i class="fas fa-credit-card fs-2 opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h4 id="upcoming-appointments">0</h4>
-                                            <small>Lịch hẹn sắp tới</small>
-                                        </div>
-                                        <i class="fas fa-calendar-alt fs-2 opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5><i class="fas fa-clock"></i> Hoạt động gần đây</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="list-group list-group-flush" id="recent-activity">
-                                        <!-- Recent activities populated here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5><i class="fas fa-calendar-check"></i> Lịch hẹn tiếp theo</h5>
-                                </div>
-                                <div class="card-body text-center" id="next-appointment">
-                                    <p>Không có lịch hẹn sắp tới.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Health Status Section -->
-                <div id="health-status" class="content-section d-none">
-                    <h2 class="mb-4">Tình trạng Sức khỏe</h2>
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <div class="card health-card">
-                                <div class="card-header bg-primary text-white">
-                                    <h5><i class="fas fa-heartbeat"></i> Dấu hiệu sinh tồn</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <div class="text-center p-3">
-                                                <h4 id="hospital-blood-pressure" class="vital-normal">120/80</h4>
-                                                <small>Huyết áp</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-center p-3">
-                                                <h4 id="hospital-heart-rate" class="vital-normal">72</h4>
-                                                <small>Nhịp tim</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-center p-3">
-                                                <h4 id="hospital-temperature" class="vital-normal">36.5°C</h4>
-                                                <small>Nhiệt độ</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-center p-3">
-                                                <h4 id="hospital-bmi" class="vital-warning">28.5</h4>
-                                                <small>Chỉ số BMI</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <div class="card health-card">
-                                <div class="card-header bg-info text-white">
-                                    <h5><i class="fas fa-vials"></i> Kết quả xét nghiệm gần đây</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Cholesterol</span>
-                                            <span id="hospital-cholesterol" class="vital-normal"><strong>180
-                                                    mg/dL</strong></span>
-                                        </div>
-                                        <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar bg-success" style="width: 70%"></div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Đường huyết</span>
-                                            <span id="hospital-blood-sugar" class="vital-warning"><strong>140
-                                                    mg/dL</strong></span>
-                                        </div>
-                                        <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar bg-warning" style="width: 85%"></div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Hemoglobin</span>
-                                            <span id="hospital-hemoglobin" class="vital-normal"><strong>14.5
-                                                    g/dL</strong></span>
-                                        </div>
-                                        <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar bg-success" style="width: 90%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fas fa-prescription"></i> Thuốc đang sử dụng</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Thuốc</th>
-                                            <th>Liều lượng</th>
-                                            <th>Tần suất</th>
-                                            <th>Bác sĩ kê đơn</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="hospital-medications">
-                                        <!-- Medications populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Consultations Section -->
-                <div id="consultations" class="content-section d-none">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>Tư vấn</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultationModal">
-                            <i class="fas fa-plus-circle"></i> Yêu cầu tư vấn
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Bảng điều khiển Bệnh nhân</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
                         </button>
                     </div>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5><i class="fas fa-user-md"></i> Bác sĩ sẵn có</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row" id="doctor-list">
-                                <!-- Doctor cards populated here -->
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm health-card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-heartbeat"></i> Dữ liệu sức khỏe của bạn</h5>
+                                <p><strong>Nhiệt độ:</strong> <span id="temperature" class="vital-normal">--</span></p>
+                                <p><strong>Nhịp tim:</strong> <span id="heartRate" class="vital-normal">--</span></p>
+                                <p><strong>Huyết áp:</strong> <span id="bloodPressure" class="vital-normal">--</span></p>
+                                <p class="text-muted"><small>Cập nhật lần cuối: <span id="lastUpdated">--</span></small></p>
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fas fa-clock"></i> Lịch sử tư vấn</h5>
-                        </div>
-                        <div class="card-body consultation-history">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Ngày</th>
-                                            <th>Bác sĩ</th>
-                                            <th>Loại</th>
-                                            <th>Trạng thái</th>
-                                            <th>Phí</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="consultation-history">
-                                        <!-- Consultation history populated here -->
-                                    </tbody>
-                                </table>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm doctor-card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-user-md"></i> Bác sĩ của bạn</h5>
+                                <p><strong>Tên bác sĩ:</strong> <span id="assignedDoctorName">--</span></p>
+                                <p><strong>Email:</strong> <span id="assignedDoctorEmail">--</span></p>
+                                <p><strong>Liên hệ:</strong> <span id="assignedDoctorContact">--</span></p>
+                                <p><strong>Chuyên khoa:</strong> <span id="assignedDoctorSpecialty">--</span></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payments Section -->
-                <div id="payments" class="content-section d-none">
-                    <h2 class="mb-4">Thanh toán & Hóa đơn</h2>
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5><i class="fas fa-receipt"></i> Hóa đơn gần đây</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Ngày</th>
-                                                    <th>Mô tả</th>
-                                                    <th>Bác sĩ</th>
-                                                    <th>Số tiền</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="payment-history">
-                                                <!-- Payment history populated here -->
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-history"></i> Lịch sử Tư vấn</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Ngày</th>
+                                                <th>Bác sĩ</th>
+                                                <th>Loại</th>
+                                                <th>Trạng thái</th>
+                                                <th>Phí</th>
+                                                <th>Chi tiết</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="consultation-history">
                                             </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card payment-card">
-                                <div class="card-body text-center">
-                                    <h5><i class="fas fa-wallet"></i> Tổng quan thanh toán</h5>
-                                    <hr class="bg-light">
-                                    <div class="mb-3">
-                                        <h4 id="total-outstanding">$0</h4>
-                                        <small>Tổng số tiền chưa thanh toán</small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Chờ xử lý:</span>
-                                            <span id="pending-amount">$0</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span>Quá hạn:</span>
-                                            <span id="overdue-amount">$0</span>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-light btn-sm w-100" onclick="payAll()">
-                                        <i class="fas fa-credit-card"></i> Thanh toán tất cả
-                                    </button>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fas fa-credit-card"></i> Phương thức thanh toán</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row" id="payment-methods">
-                                <!-- Payment methods populated here -->
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-comments"></i> Tin nhắn với Bác sĩ</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chat-box mb-3" id="messageHistory">
+                                    </div>
+                                <div class="input-group message-input-group">
+                                    <input type="text" id="messageInput" class="form-control" placeholder="Nhập tin nhắn...">
+                                    <button class="btn btn-primary" id="sendMessageBtn">Gửi</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Consultation Request Modal -->
-    <div class="modal fade" id="consultationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Yêu cầu Tư vấn</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="consultationForm">
-                        <div class="mb-3">
-                            <label class="form-label">Chọn Bác sĩ</label>
-                            <select class="form-select" id="doctorSelect" required>
-                                <option value="">Chọn bác sĩ...</option>
-                                <option value="">Dr. Nguyễn Đình Thiện</option>
-                                <option value="">Dr. Nguyễn Trọng Lưu</option>
-                                <option value="">Dr. Lê Minh Trí</option>
-                                <option value="">Dr. Trần Bình Trọng</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Loại tư vấn</label>
-                            <select class="form-select" required>
-                                <option value="">Chọn loại...</option>
-                                <option value="routine">Kiểm tra định kỳ</option>
-                                <option value="follow-up">Tái khám</option>
-                                <option value="urgent">Tư vấn khẩn cấp</option>
-                                <option value="second-opinion">Ý kiến thứ hai</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ngày ưu tiên</label>
-                            <input type="date" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Thời gian ưu tiên</label>
-                            <select class="form-select" required>
-                                <option value="">Chọn thời gian...</option>
-                                <option value="09:00">9:00 AM</option>
-                                <option value="10:00">10:00 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="14:00">2:00 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                                <option value="16:00">4:00 PM</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Lý do tư vấn</label>
-                            <textarea class="form-control" rows="3" placeholder="Mô tả ngắn gọn vấn đề..."
-                                required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="sendConsultationRequest()">Gửi yêu
-                        cầu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment Method Modal -->
-    <div class="modal fade" id="paymentMethodModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Thêm phương thức thanh toán</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="paymentMethodForm">
-                        <div class="mb-3">
-                            <label class="form-label">Số thẻ</label>
-                            <input type="text" class="form-control" placeholder="1234 5678 9012 3456" required>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="form-label">Ngày hết hạn</label>
-                                <input type="text" class="form-control" placeholder="MM/YY" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">CVV</label>
-                                <input type="text" class="form-control" placeholder="123" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Tên chủ thẻ</label>
-                            <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input"> Đặt làm chính
-                            </label>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="addPaymentMethod()">Thêm thẻ</button>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        let currentPatientId = 3;
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initializeDashboard();
-            showSection('dashboard');
-        });
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(el => el.classList.add('d-none'));
-            document.getElementById(sectionId).classList.remove('d-none');
-
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
-        }
-
-        async function initializeDashboard() {
-            const patient = await fetchPatient(currentPatientId);
-            updateHealthStatus(patient);
-            await populateDoctors();
-            await updateConsultationHistory(currentPatientId);
-            await populateDoctorSelect();
-        }
-
-        async function fetchPatient(patientId) {
-            const res = await fetch(`/api/patients/${patientId}`);
-            if (!res.ok) throw new Error('Không thể tải thông tin bệnh nhân');
-            return await res.json();
-        }
-
-        function updateHealthStatus(patient) {
-            const latest = patient.latestHealthData || {};
-
-            document.getElementById('hospital-blood-pressure').textContent = latest.bloodPressure ?? 'N/A';
-            document.getElementById('hospital-heart-rate').textContent = latest.heartRate ? `${latest.heartRate} BPM` : 'N/A';
-            document.getElementById('hospital-temperature').textContent = latest.temperature ? `${latest.temperature}°C` : 'N/A';
-            document.getElementById('hospital-bmi').textContent = patient.bmi ?? 'Chưa có';
-        }
-
-        async function populateDoctors() {
-            const res = await fetch('/api/doctors');
-            const doctors = await res.json();
-
-            const doctorList = document.getElementById('doctor-list');
-            doctorList.innerHTML = '';
-            doctors.forEach(doctor => {
-                doctorList.innerHTML += `
-                <div class="col-md-4 mb-3">
-                    <div class="card doctor-card" onclick="sendConsultationRequest(${doctor.id})">
-                        <div class="card-body text-center">
-                            <img src="https://via.placeholder.com/80x80/007bff/ffffff?text=${doctor.name[0]}" 
-                                 class="rounded-circle mb-3" alt="${doctor.name}">
-                            <h5>${doctor.name}</h5>
-                            <p class="text-muted">${doctor.specialty || ''}</p>
-                            <button class="btn btn-outline-primary btn-sm">Yêu cầu tư vấn</button>
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        async function populateDoctorSelect() {
-            const res = await fetch('/api/doctors');
-            const doctors = await res.json();
-
-            const select = document.getElementById('doctorSelect');
-            select.innerHTML = '<option value="">Chọn bác sĩ...</option>';
-            doctors.forEach(d => {
-                select.innerHTML += `<option value="${d.id}">${d.name} - ${d.specialty ?? ''}</option>`;
-            });
-        }
-
-        async function sendConsultationRequest(doctorId) {
-            const payload = {
-                doctorId: doctorId,
-                patientId: currentPatientId
-            };
-
-            const res = await fetch('/api/consultations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                alert('Yêu cầu tư vấn đã được gửi thành công!');
-                await updateConsultationHistory(currentPatientId);
-                await populateDoctors();
-            } else {
-                alert('Lỗi khi gửi yêu cầu tư vấn.');
-            }
-        }
-
-
-        async function updateConsultationHistory(patientId) {
-            const res = await fetch(`/api/patients/${patientId}/consultations`);
-            const consultations = await res.json();
-
-            const table = document.getElementById('consultation-history');
-            table.innerHTML = '';
-            consultations.forEach(c => {
-                table.innerHTML += `
-                <tr>
-                    <td>${c.date}</td>
-                    <td>${c.doctorName}</td>
-                    <td>${c.type || 'Tư vấn'}</td>
-                    <td><span class="badge bg-${getStatusColor(c.status)}">${c.status}</span></td>
-                    <td>$${c.fee ?? '0'}</td>
-                    <td><button class="btn btn-sm btn-outline-info">Chi tiết</button></td>
-                </tr>`;
-            });
-        }
-
-        function getStatusColor(status) {
-            switch (status) {
-                case 'Hoàn thành':
-                    return 'success';
-                case 'Đang chờ':
-                    return 'warning';
-                case 'Đã hủy':
-                    return 'danger';
-                default:
-                    return 'secondary';
-            }
-        }
-
-        function logout() {
-            if (confirm('Bạn có chắc muốn đăng xuất?')) {
-                alert('Đăng xuất thành công!');
-                window.location.href = 'login.html';
-            }
-        }
-
-
-    </script>
-
+    <script src="patient.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,31 @@
+let allUsersData = [];
+
+// Hàm khởi tạo dữ liệu người dùng mặc định trong localStorage
+function loadInitialUsersData() {
+    const storedUsers = localStorage.getItem('usersData');
+    if (storedUsers) {
+        allUsersData = JSON.parse(storedUsers);
+    } else {
+        // Dữ liệu người dùng mặc định (Email, Mật khẩu, Tên hiển thị, Vai trò)
+        allUsersData = [
+            { email: 'doduc1605@gmail.com', password: 'doctorpassword', name: 'Bác sĩ Minh Đức', role: 'doctor' },
+            { email: 'bacsi.nguyena@example.com', password: 'doctorpassword', name: 'Bác sĩ Nguyễn A', role: 'doctor' },
+            { email: 'bacsi.leb@example.com', password: 'doctorpassword', name: 'Bác sĩ Lê B', role: 'doctor' },
+            // Thêm các tài khoản bệnh nhân khớp với 'patientEmail' trong doctor.js
+            { email: 'patient.a@example.com', password: 'patientpassword', name: 'Nguyễn Văn A (Bệnh nhân)', role: 'patient' },
+            { email: 'patient.b@example.com', password: 'patientpassword', name: 'Trần Thị B (Bệnh nhân)', role: 'patient' },
+            { email: 'patient.c@example.com', password: 'patientpassword', name: 'Lê Văn C (Bệnh nhân)', role: 'patient' },
+            { email: 'patient.d@example.com', password: 'patientpassword', name: 'Phạm Thị D (Bệnh nhân)', role: 'patient' }
+            
+        ];
+        localStorage.setItem('usersData', JSON.stringify(allUsersData));
+    }
+}
+
 let selectedRole = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadInitialUsersData(); // Tải dữ liệu người dùng khi trang load
 
     // Handle role selection
     document.querySelectorAll('.role-btn').forEach(btn => {
@@ -6,79 +33,67 @@ let selectedRole = null;
             document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             selectedRole = this.dataset.role;
-            document.getElementById('role').value = selectedRole;
-
+            const roleInput = document.getElementById('role');
+            if (roleInput) roleInput.value = selectedRole; // Kiểm tra tồn tại
+            
             document.querySelectorAll('.role-info').forEach(info => info.classList.remove('show'));
-            document.getElementById(selectedRole + 'Info').classList.add('show');
+            const selectedInfo = document.getElementById(selectedRole + 'Info');
+            if (selectedInfo) selectedInfo.classList.add('show'); // Kiểm tra tồn tại
 
-            document.getElementById('roleAlert').style.display = 'none';
+            const roleAlert = document.getElementById('roleAlert');
+            if (roleAlert) roleAlert.style.display = 'none'; // Kiểm tra tồn tại
         });
     });
 
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
+    document.getElementById('loginForm')?.addEventListener('submit', function (e) { // Optional Chaining
         e.preventDefault();
 
+        const roleAlert = document.getElementById('roleAlert');
         if (!selectedRole) {
-            document.getElementById('roleAlert').style.display = 'block';
+            if (roleAlert) roleAlert.style.display = 'block';
             return;
         }
 
-        const email = document.getElementById('email').value.toLowerCase(); // Lấy email và chuyển về chữ thường để so sánh
-        const password = document.getElementById('password').value; // Mật khẩu không được sử dụng trong demo này
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
 
-        let mockUserName;
-        let mockUserRole;
+        if (!emailInput || !passwordInput) {
+            console.error("Missing email or password input field.");
+            return;
+        }
 
-        if (selectedRole === 'doctor') {
-            mockUserRole = 'doctor';
-            
-            if (email === 'doduc1605@gmail.com') {
-                mockUserName = 'Minh Duc';
-            } else if (email === 'bacsi.nguyena@example.com') {
-                mockUserName = 'Nguyen Van A';
-            } else if (email === 'bacsi.leb@example.com') { 
-                mockUserName = 'le Thi B';
-            } else if (email === 'bacsi.tranc@example.com') { 
-                mockUserName = 'Nguyen Phuong C';
-            }
-            else {
-                const namePart = email.split('@')[0].replace('.', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                mockUserName = `Bác sĩ ${namePart}`;
-            }
-            // --- Kết thúc logic thay đổi tên bác sĩ ---
-        } else if (selectedRole === 'patient') {
-            mockUserRole = 'patient';
-            // Bạn cũng có thể làm tương tự để thay đổi tên bệnh nhân dựa trên email
-            if (email === 'patientabc@gmail.com') {
-                mockUserName = 'Trần Thị B';
-            } else if (email === 'benhnhan.hoang@example.com') {
-                mockUserName = 'Bệnh nhân Hoàng';
-            } else {
-                 const namePart = email.split('@')[0].replace('.', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                mockUserName = `Bệnh nhân ${namePart}`;
+        const email = emailInput.value.toLowerCase();
+        const password = passwordInput.value;
+
+        // Tìm người dùng trong dữ liệu đã tải
+        const user = allUsersData.find(u => u.email === email && u.password === password && u.role === selectedRole);
+
+        if (user) {
+            // Lưu thông tin vào localStorage
+            localStorage.setItem('loggedInUserId', user.email);
+            localStorage.setItem('loggedInUserName', user.name);
+            localStorage.setItem('loggedInUserRole', user.role);
+
+            alert(`Đăng nhập thành công với vai trò ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}!\nEmail: ${user.email}`);
+
+            if (user.role === 'doctor') {
+                window.location.href = 'doctor.html';
+            } else if (user.role === 'patient') {
+                window.location.href = 'patient.html';
             }
         } else {
-            document.getElementById('roleAlert').style.display = 'block';
-            return;
+            alert('Email, mật khẩu hoặc vai trò không đúng. Vui lòng thử lại!');
         }
-
-        // Lưu thông tin vào localStorage
-        localStorage.setItem('loggedInUserId', email); 
-        localStorage.setItem('loggedInUserName', mockUserName); 
-        localStorage.setItem('loggedInUserRole', mockUserRole);
-
-        alert(`Đăng nhập thành công với vai trò ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}!\nEmail: ${email}`);
-
-        window.location.href = selectedRole === 'doctor' ? 'doctor.html' : 'patient.html';
     });
 
     document.querySelectorAll('.form-control').forEach(input => {
         input.addEventListener('focus', function () {
-            this.parentElement.classList.add('focused');
+            this.parentElement?.classList.add('focused'); // Optional Chaining
         });
         input.addEventListener('blur', function () {
             if (!this.value) {
-                this.parentElement.classList.remove('focused');
+                this.parentElement?.classList.remove('focused'); // Optional Chaining
             }
         });
     });
+});
