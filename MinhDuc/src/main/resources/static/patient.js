@@ -4,7 +4,7 @@
 
         // Dữ liệu bác sĩ (tĩnh, có thể được tải động nếu có backend)
         const allDoctorsData = [
-            { email: 'doduc1605@gmail.com', name: 'BS. Đỗ Minh Đức', contact: '0901234567', specialty: 'Nội tổng quát' },
+            { email: 'doduc1605@gmail.com', name: 'BS. Đỗ Hà Minh Đức', contact: '0901234567', specialty: 'Nội tổng quát' },
             { email: 'bacsi.nguyena@example.com', name: 'BS. Nguyễn Văn A', contact: '0911223344', specialty: 'Tim mạch' },
             { email: 'bacsi.leb@example.com', name: 'BS. Lê Thị B', contact: '0922334455', specialty: 'Nhi khoa' },
         ];

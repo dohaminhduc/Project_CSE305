@@ -109,6 +109,7 @@ function loadInitialPatientsData() {
 }
 
 // Hàm để thêm bệnh nhân mới
+// Thêm event listener cho form thêm bệnh nhân
 document.getElementById('addPatientForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Ngăn chặn form gửi đi
 
@@ -147,8 +148,10 @@ document.getElementById('addPatientForm').addEventListener('submit', function (e
 
     // Đóng modal và tải lại danh sách bệnh nhân
     const addPatientModal = bootstrap.Modal.getInstance(document.getElementById('addPatientModal'));
-    addPatientModal.hide();
+    if (addPatientModal) addPatientModal.hide(); // Kiểm tra sự tồn tại của modal
     loadPatients();
+    // Sau khi thêm bệnh nhân mới, đảm bảo hiển thị phần chi tiết bệnh nhân
+    showPatientDetailsUI();
 });
 
 
@@ -162,14 +165,38 @@ async function loadPatients() {
         patient.assignedDoctorEmail === loggedInDoctorEmail
     );
 
+    // Xóa logic ẩn/hiện showStatisticsUI() khỏi đây.
+    // Logic hiển thị mặc định khi tải trang sẽ nằm trong DOMContentLoaded.
     if (patientsForCurrentDoctor.length === 0) {
         patientListElement.innerHTML = '<p class="text-muted text-center mt-3">Bạn chưa có bệnh nhân nào được gán.</p>';
-        document.getElementById('patientDetailsSection').style.display = 'none';
         document.getElementById('completeConsultationBtn').style.display = 'none';
-        return;
+        currentSelectedPatientId = null; // Đảm bảo không có bệnh nhân nào được chọn
+        // Không return ở đây để các card bệnh nhân (nếu có) vẫn được xử lý sau này
+        // (mặc dù trong trường hợp này sẽ không có gì để xử lý).
     } else {
-        document.getElementById('patientDetailsSection').style.display = 'block';
+        // Tự động chọn bệnh nhân đầu tiên nếu có, hoặc giữ bệnh nhân đã chọn
+        let patientToDisplay = null;
+        if (currentSelectedPatientId) {
+            patientToDisplay = patientsForCurrentDoctor.find(p => p.id === currentSelectedPatientId);
+        }
+        if (!patientToDisplay) {
+            patientToDisplay = patientsForCurrentDoctor[0];
+        }
+
+        if (patientToDisplay) {
+            currentSelectedPatientId = patientToDisplay.id;
+            showPatientDetails(currentSelectedPatientId);
+            // showPatientDetailsUI(); // Việc hiển thị UI do DOMContentLoaded hoặc click đảm nhiệm
+            document.getElementById('completeConsultationBtn').style.display = 'inline-block';
+        } else {
+            // Trường hợp này xảy ra nếu patientsForCurrentDoctor.length > 0 nhưng patientToDisplay vẫn null
+            // (ví dụ: filterPatients đã lọc ra hết, nhưng loadPatients() lại không được gọi lại)
+            console.warn("Không tìm thấy bệnh nhân để hiển thị chi tiết mặc dù danh sách không rỗng.");
+            // Ẩn nút hoàn thành tư vấn nếu không có bệnh nhân để hiển thị chi tiết
+            document.getElementById('completeConsultationBtn').style.display = 'none';
+        }
     }
+
 
     patientsForCurrentDoctor.forEach(patient => {
         const patientCard = `
@@ -195,32 +222,17 @@ async function loadPatients() {
             this.classList.add('active');
             currentSelectedPatientId = this.dataset.patientId; // Lưu ID bệnh nhân đang chọn
             showPatientDetails(currentSelectedPatientId);
+            showPatientDetailsUI(); // Đảm bảo UI chi tiết bệnh nhân được hiển thị
             document.getElementById('completeConsultationBtn').style.display = 'inline-block'; // Hiện nút hoàn thành
         });
     });
 
-    // Tự động chọn bệnh nhân đầu tiên nếu có
-    if (patientsForCurrentDoctor.length > 0 && !currentSelectedPatientId) {
-        const firstPatientCard = document.querySelector(`.patient-card[data-patient-id="${patientsForCurrentDoctor[0].id}"]`);
-        if (firstPatientCard) {
-            firstPatientCard.classList.add('active');
-            currentSelectedPatientId = patientsForCurrentDoctor[0].id;
-            showPatientDetails(currentSelectedPatientId);
-            document.getElementById('completeConsultationBtn').style.display = 'inline-block';
-        }
-    } else if (currentSelectedPatientId) {
-        // Nếu có bệnh nhân đã chọn trước đó, hiển thị lại chi tiết của họ
-        showPatientDetails(currentSelectedPatientId);
-        // Kích hoạt lại thẻ bệnh nhân trong danh sách
+    // Kích hoạt lại thẻ bệnh nhân trong danh sách nếu có bệnh nhân đang chọn
+    if (currentSelectedPatientId) {
         const activeCard = document.querySelector(`.patient-card[data-patient-id="${currentSelectedPatientId}"]`);
         if (activeCard) {
             activeCard.classList.add('active');
         }
-        document.getElementById('completeConsultationBtn').style.display = 'inline-block';
-    }
-    else {
-        document.getElementById('patientDetailsSection').style.display = 'none';
-        document.getElementById('completeConsultationBtn').style.display = 'none';
     }
 }
 
@@ -260,58 +272,70 @@ async function showPatientDetails(patientId) {
 
     // Cập nhật màu sắc cho các chỉ số quan trọng
     const tempElement = document.getElementById('temperature');
-    if (healthData.temperature > 37.5) {
-        tempElement.className = 'vital-danger';
-    } else if (healthData.temperature > 37.0) {
-        tempElement.className = 'vital-warning';
-    } else {
-        tempElement.className = 'vital-normal';
+    if (tempElement) { // Thêm kiểm tra null để an toàn
+        if (healthData.temperature > 37.5) {
+            tempElement.className = 'vital-danger';
+        } else if (healthData.temperature > 37.0) {
+            tempElement.className = 'vital-warning';
+        } else {
+            tempElement.className = 'vital-normal';
+        }
     }
+
 
     const hrElement = document.getElementById('heartRate');
-    if (healthData.heartRate > 100 || healthData.heartRate < 60) {
-        hrElement.className = 'vital-warning';
-    } else {
-        hrElement.className = 'vital-normal';
+    if (hrElement) { // Thêm kiểm tra null để an toàn
+        if (healthData.heartRate > 100 || healthData.heartRate < 60) {
+            hrElement.className = 'vital-warning';
+        } else {
+            hrElement.className = 'vital-normal';
+        }
     }
 
+
     const bpElement = document.getElementById('bloodPressure');
-    const systolic = parseInt(healthData.bloodPressure.split('/')[0]);
-    if (systolic > 140) {
-        bpElement.className = 'vital-danger';
-    } else if (systolic > 130) {
-        bpElement.className = 'vital-warning';
-    } else {
-        bpElement.className = 'vital-normal';
+    if (bpElement) { // Thêm kiểm tra null để an toàn
+        const systolic = parseInt(healthData.bloodPressure.split('/')[0]);
+        if (systolic > 140) {
+            bpElement.className = 'vital-danger';
+        } else if (systolic > 130) {
+            bpElement.className = 'vital-warning';
+        } else {
+            bpElement.className = 'vital-normal';
+        }
     }
+
 
     // Hiển thị lịch sử tư vấn
     const consultationHistoryTable = document.getElementById('consultation-history');
-    consultationHistoryTable.innerHTML = '';
-    if (patient.consultationHistory && patient.consultationHistory.length > 0) {
-        const loggedInDoctorEmail = localStorage.getItem('loggedInUserId');
-        let hasConsultationsForDoctor = false;
-        patient.consultationHistory.forEach(c => {
-            if (c.doctorEmail === loggedInDoctorEmail) { // Chỉ hiển thị các tư vấn mà bác sĩ hiện tại đã hoặc đang tham gia
-                hasConsultationsForDoctor = true;
-                consultationHistoryTable.innerHTML += `
-                            <tr>
-                                <td>${c.date}</td>
-                                <td>${c.doctorEmail === loggedInDoctorEmail ? 'Bạn' : c.doctorEmail}</td>
-                                <td>${c.type || 'Tư vấn'}</td>
-                                <td><span class="badge bg-${getStatusColor(c.status)}">${c.status}</span></td>
-                                <td>$${c.fee ?? '0'}</td>
-                                <td><button class="btn btn-sm btn-outline-info" onclick="alert('Chi tiết tư vấn: ${c.notes}')">Chi tiết</button></td>
-                            </tr>
-                        `;
+    if (consultationHistoryTable) { // Thêm kiểm tra null để an toàn
+        consultationHistoryTable.innerHTML = '';
+        if (patient.consultationHistory && patient.consultationHistory.length > 0) {
+            const loggedInDoctorEmail = localStorage.getItem('loggedInUserId');
+            let hasConsultationsForDoctor = false;
+            patient.consultationHistory.forEach(c => {
+                if (c.doctorEmail === loggedInDoctorEmail) { // Chỉ hiển thị các tư vấn mà bác sĩ hiện tại đã hoặc đang tham gia
+                    hasConsultationsForDoctor = true;
+                    consultationHistoryTable.innerHTML += `
+                                <tr>
+                                    <td>${c.date}</td>
+                                    <td>${c.doctorEmail === loggedInDoctorEmail ? 'Bạn' : c.doctorEmail}</td>
+                                    <td>${c.type || 'Tư vấn'}</td>
+                                    <td><span class="badge bg-${getStatusColor(c.status)}">${c.status}</span></td>
+                                    <td>$${c.fee ?? '0'}</td>
+                                    <td><button class="btn btn-sm btn-outline-info" onclick="alert('Chi tiết tư vấn: ${c.notes}')">Chi tiết</button></td>
+                                </tr>
+                            `;
+                }
+            });
+            if (!hasConsultationsForDoctor) {
+                consultationHistoryTable.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Bệnh nhân này chưa có lịch sử tư vấn với bạn.</td></tr>`;
             }
-        });
-        if (!hasConsultationsForDoctor) {
-            consultationHistoryTable.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Bệnh nhân này chưa có lịch sử tư vấn với bạn.</td></tr>`;
+        } else {
+            consultationHistoryTable.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Bệnh nhân này chưa có lịch sử tư vấn.</td></tr>`;
         }
-    } else {
-        consultationHistoryTable.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Bệnh nhân này chưa có lịch sử tư vấn.</td></tr>`;
     }
+
 
     // Load và hiển thị tin nhắn
     loadMessages(patientId);
@@ -324,7 +348,7 @@ function showStatistics() {
     let completedConsultationsToday = 0;
 
     allPatientsData.forEach(patient => {
-        if (patient.consultationHistory) { // Không cần lọc theo assignedDoctorEmail ở đây vì thống kê tổng thể
+        if (patient.consultationHistory) {
             patient.consultationHistory.forEach(consultation => {
                 if (consultation.doctorEmail === loggedInDoctorEmail &&
                     consultation.status === 'Hoàn thành' &&
@@ -334,11 +358,12 @@ function showStatistics() {
             });
         }
     });
+    const consultationsTodayElement = document.getElementById('consultationsToday');
+    if (consultationsTodayElement) { // Thêm kiểm tra null để an toàn
+        consultationsTodayElement.textContent = completedConsultationsToday;
+    }
 
-    document.getElementById('consultationsToday').textContent = completedConsultationsToday;
-    document.getElementById('patientDetailsSection').style.display = 'none'; // Ẩn chi tiết bệnh nhân khi xem thống kê
-    document.getElementById('statisticsSection').style.display = 'block'; // Hiện phần thống kê
-    document.getElementById('completeConsultationBtn').style.display = 'none'; // Ẩn nút hoàn thành
+    // showStatistics() sẽ chỉ cập nhật số liệu, việc ẩn/hiện do showStatisticsUI() đảm nhiệm
 }
 
 // Hàm hoàn thành tư vấn
@@ -499,6 +524,7 @@ function filterPatients() {
             this.classList.add('active');
             currentSelectedPatientId = this.dataset.patientId;
             showPatientDetails(currentSelectedPatientId);
+            showPatientDetailsUI(); // Đảm bảo hiển thị chi tiết khi click vào kết quả tìm kiếm
             document.getElementById('completeConsultationBtn').style.display = 'inline-block';
         });
     });
@@ -524,6 +550,66 @@ function logout() {
 }
 window.logout = logout; // Để hàm logout có thể được gọi từ HTML
 
+// Hàm điều khiển hiển thị UI cho phần chi tiết bệnh nhân
+function showPatientDetailsUI() {
+    const patientDetailsSection = document.getElementById('patientDetailsSection');
+    const statisticsSection = document.getElementById('statisticsSection');
+    const patientListTab = document.getElementById('patientListTab');
+    const statisticsTab = document.getElementById('statisticsTab');
+    const completeConsultationBtn = document.getElementById('completeConsultationBtn');
+
+    if (patientDetailsSection) patientDetailsSection.style.display = 'block';
+    if (statisticsSection) statisticsSection.style.display = 'none';
+
+    // Kích hoạt tab "Danh sách bệnh nhân"
+    if (patientListTab) {
+        patientListTab.classList.add('active');
+        patientListTab.setAttribute('aria-selected', 'true');
+    }
+    if (statisticsTab) {
+        statisticsTab.classList.remove('active');
+        statisticsTab.setAttribute('aria-selected', 'false');
+    }
+
+    // Hiển thị nút "Hoàn thành tư vấn" nếu có bệnh nhân được chọn
+    if (completeConsultationBtn) {
+        if (currentSelectedPatientId) {
+            completeConsultationBtn.style.display = 'inline-block';
+        } else {
+            completeConsultationBtn.style.display = 'none';
+        }
+    }
+}
+
+// Hàm điều khiển hiển thị UI cho phần thống kê
+function showStatisticsUI() {
+    const patientDetailsSection = document.getElementById('patientDetailsSection');
+    const statisticsSection = document.getElementById('statisticsSection');
+    const patientListTab = document.getElementById('patientListTab');
+    const statisticsTab = document.getElementById('statisticsTab');
+    const completeConsultationBtn = document.getElementById('completeConsultationBtn');
+
+    if (patientDetailsSection) patientDetailsSection.style.display = 'none';
+    if (statisticsSection) statisticsSection.style.display = 'block';
+
+    showStatistics(); // Cập nhật lại số liệu thống kê
+
+    // Kích hoạt tab "Thống kê"
+    if (patientListTab) {
+        patientListTab.classList.remove('active');
+        patientListTab.setAttribute('aria-selected', 'false');
+    }
+    if (statisticsTab) {
+        statisticsTab.classList.add('active');
+        statisticsTab.setAttribute('aria-selected', 'true');
+    }
+
+    if (completeConsultationBtn) { // Ẩn nút "Hoàn thành tư vấn" khi ở tab thống kê
+        completeConsultationBtn.style.display = 'none';
+    }
+}
+
+
 // --- DOMContentLoaded: Chạy khi toàn bộ trang được tải ---
 document.addEventListener('DOMContentLoaded', function () {
     const loggedInUserId = localStorage.getItem('loggedInUserId');
@@ -539,31 +625,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Hiển thị tên bác sĩ trên giao diện
     const doctorNameDisplayElement = document.getElementById('doctorNameDisplay');
+    const doctorNameDisplaySidebarElement = document.getElementById('doctorNameDisplaySidebar');
     if (doctorNameDisplayElement) {
         doctorNameDisplayElement.textContent = `${loggedInUserName}`;
     }
+    if (doctorNameDisplaySidebarElement) {
+        doctorNameDisplaySidebarElement.textContent = `${loggedInUserName}`;
+    }
 
-    // Tải dữ liệu ban đầu và hiển thị danh sách bệnh nhân, thống kê
+    // Tải dữ liệu ban đầu
     loadInitialPatientsData();
+    // loadPatients() sẽ tự động chọn bệnh nhân đầu tiên nếu có
     loadPatients();
-    showStatistics();
+    showStatistics(); // Cập nhật số liệu thống kê ban đầu
+
+    // Quyết định chế độ xem ban đầu:
+    // Sau khi loadPatients() đã thiết lập currentSelectedPatientId (nếu có bệnh nhân),
+    // chúng ta sẽ quyết định hiển thị phần nào.
+    const loggedInDoctorEmail = localStorage.getItem('loggedInUserId');
+    const patientsForCurrentDoctor = allPatientsData.filter(patient =>
+        patient.assignedDoctorEmail === loggedInDoctorEmail
+    );
+
+    if (patientsForCurrentDoctor.length > 0) {
+        showPatientDetailsUI(); // Hiển thị chi tiết bệnh nhân (và danh sách)
+    } else {
+        showStatisticsUI(); // Hiển thị thống kê nếu không có bệnh nhân nào
+    }
 
 
-    document.getElementById('updateHealthDataBtn').addEventListener('click', function () {
+    document.getElementById('updateHealthDataBtn')?.addEventListener('click', function () {
         alert('Chức năng cập nhật dữ liệu sức khỏe (chưa được triển khai đầy đủ) sẽ được xử lý tại đây.');
     });
 
 
-    document.getElementById('completeConsultationBtn').addEventListener('click', completeConsultation);
-    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
-    document.getElementById('messageInput').addEventListener('keypress', function (event) {
+    document.getElementById('completeConsultationBtn')?.addEventListener('click', completeConsultation);
+    document.getElementById('sendMessageBtn')?.addEventListener('click', sendMessage);
+    document.getElementById('messageInput')?.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             sendMessage();
         }
     });
 
 
-    document.getElementById('searchPatient').addEventListener('input', filterPatients);
+    document.getElementById('searchPatient')?.addEventListener('input', filterPatients);
+
+    // Gắn sự kiện cho các tab điều hướng
+    document.getElementById('patientListTab')?.addEventListener('click', showPatientDetailsUI);
+    document.getElementById('statisticsTab')?.addEventListener('click', showStatisticsUI);
 });
 
 function deleteMessage(patientId, messageIndex) {

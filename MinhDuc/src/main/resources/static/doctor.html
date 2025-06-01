@@ -11,13 +11,16 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <i class="fas fa-heartbeat text-primary me-2"></i>
                 <span class="fw-bold">HealthCare Portal</span>
             </a>
             <div class="d-flex ms-auto">
+                <span class="navbar-text me-3 d-none d-md-block">
+                    Chào mừng, <strong id="doctorNameDisplay">Bác sĩ</strong>!
+                </span>
                 <button class="btn btn-outline-danger" onclick="logout()">
                     <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                 </button>
@@ -29,101 +32,176 @@
         <div class="sidebar col-md-3">
             <div class="doctor-card">
                 <i class="fas fa-user-md"></i>
-                <h4 id="doctorNameDisplay">Bác sĩ Dashboard</h4>
-                <p class="text-muted mb-0">Chuyên khoa: Tim mạch</p>
+                <h4 id="doctorNameDisplaySidebar">Bác sĩ</h4>
             </div>
 
-            <h5 class="mb-3 mt-4 text-primary">Danh sách bệnh nhân</h5>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Tìm kiếm bệnh nhân..." id="searchPatient">
-                <button class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
-            </div>
+            <ul class="nav nav-pills flex-column mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" id="patientListTab" data-bs-toggle="pill" href="#patientListContent" role="tab" aria-controls="patientListContent" aria-selected="true" onclick="showPatientListUI()">
+                        <i class="fas fa-users me-2"></i>Danh sách bệnh nhân
+                    </a>
+                </li>
+                <li class="nav-item mt-2">
+                    <a class="nav-link" id="statisticsTab" data-bs-toggle="pill" href="#statisticsContent" role="tab" aria-controls="statisticsContent" aria-selected="false" onclick="showStatisticsUI()">
+                        <i class="fas fa-chart-bar me-2"></i>Thống kê
+                    </a>
+                </li>
+            </ul>
 
-            <div class="row" id="patientList">
-                <p class="text-muted text-center mt-3">Đang tải bệnh nhân...</p>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="patientListContent" role="tabpanel" aria-labelledby="patientListTab">
+                    <h5 class="mb-3 mt-4 text-primary">Bệnh nhân của tôi</h5>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm bệnh nhân..." id="searchPatient">
+                        <button class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                    </div>
+                    <button class="btn btn-primary btn-sm mb-3 w-100" data-bs-toggle="modal" data-bs-target="#addPatientModal">
+                        <i class="fas fa-plus"></i> Thêm bệnh nhân mới
+                    </button>
+                    <div class="row" id="patientList">
+                        <p class="text-muted text-center mt-3">Đang tải bệnh nhân...</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="main-content p-4 col-md-9" id="patientDetailsSection" style="display:none;">
-            <h3 class="mb-4 text-primary">Patient Details</h3>
 
-            <div class="row mb-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary"><i class="fas fa-calendar-check me-2"></i>Hoàn Thành Hôm Nay</h5>
-                            <p class="card-text fs-3 fw-bold" id="consultationsToday">0</p>
+        <div class="main-content p-4 col-md-9">
+            <div id="patientDetailsSection" style="display: none;">
+                <h3 class="mb-4 text-primary">Chi tiết bệnh nhân</h3>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-secondary"><i class="fas fa-user-injured me-2"></i>Thông tin cơ bản</h5>
+                                <p class="mb-1"><strong>Tên:</strong> <span id="patientName"></span></p>
+                                <p class="mb-1"><strong>ID:</strong> <span id="patientId"></span></p>
+                                <p class="mb-1"><strong>Ngày sinh:</strong> <span id="patientDob"></span></p>
+                                <p class="mb-1"><strong>Giới tính:</strong> <span id="patientGender"></span></p>
+                                <p class="mb-1"><strong>Liên hệ:</strong> <span id="patientContact"></span></p>
+                                <p class="mb-1"><strong>Địa chỉ:</strong> <span id="patientAddress"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-secondary"><i class="fas fa-heartbeat me-2"></i>Dữ liệu sức khỏe</h5>
+                                <div class="health-metric">
+                                    <strong>Nhiệt độ:</strong> <span id="temperature"></span>
+                                </div>
+                                <div class="health-metric">
+                                    <strong>Nhịp tim:</strong> <span id="heartRate"></span>
+                                </div>
+                                <div class="health-metric">
+                                    <strong>Huyết áp:</strong> <span id="bloodPressure"></span>
+                                </div>
+                                <p class="mb-0 text-muted" id="lastUpdated"></p>
+                                <button id="updateHealthDataBtn" class="btn btn-outline-primary btn-sm mt-3"><i class="fas fa-sync-alt me-2"></i>Cập nhật</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <h4 class="mt-4 mb-3 text-primary">Lịch sử tư vấn</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Bác sĩ</th>
+                                <th>Loại tư vấn</th>
+                                <th>Trạng thái</th>
+                                <th>Phí</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultation-history">
+                            </tbody>
+                    </table>
                 </div>
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary"><i class="fas fa-user-injured me-2"></i>Thông tin cơ bản</h5>
-                            <p class="mb-1"><strong>Tên:</strong> <span id="patientName"></span></p>
-                            <p class="mb-1"><strong>ID:</strong> <span id="patientId"></span></p>
-                            <p class="mb-1"><strong>Ngày sinh:</strong> <span id="patientDob"></span></p>
-                            <p class="mb-1"><strong>Giới tính:</strong> <span id="patientGender"></span></p>
-                            <p class="mb-1"><strong>Liên hệ:</strong> <span id="patientContact"></span></p>
-                            <p class="mb-1"><strong>Địa chỉ:</strong> <span id="patientAddress"></span></p>
+
+                <h4 class="mt-4 mb-3 text-primary">Tư vấn với Bệnh nhân</h4>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="chat-box" style="height: 300px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px;" id="messageHistory">
+                            <p class="text-muted text-center">Chưa có tin nhắn nào. Bắt đầu cuộc tư vấn!</p>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Nhập tin nhắn tư vấn..." id="messageInput">
+                            <button class="btn btn-primary" id="sendMessageBtn"><i class="fas fa-paper-plane me-2"></i>Gửi</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary"><i class="fas fa-heartbeat me-2"></i>Dữ liệu sức khỏe</h5>
-                            <div class="health-metric">
-                                <strong>Nhiệt độ:</strong> <span id="temperature"></span>
-                            </div>
-                            <div class="health-metric">
-                                <strong>Nhịp tim:</strong> <span id="heartRate"></span>
-                            </div>
-                            <div class="health-metric">
-                                <strong>Huyết áp:</strong> <span id="bloodPressure"></span>
-                            </div>
-                            <p class="mb-0 text-muted" id="lastUpdated"></p>
-                        </div>
-                    </div>
-                </div>
-            </div> <h4 class="mt-4 mb-3 text-primary">Lịch sử tư vấn</h4>
-            <div class="table-responsive">
-                <table class="table table-hover table-striped">
-                    <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>Bác sĩ</th>
-                            <th>Loại tư vấn</th>
-                            <th>Trạng thái</th>
-                            <th>Phí</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody id="consultation-history">
-                        </tbody>
-                </table>
+                <button id="completeConsultationBtn" class="btn btn-info mt-3 ms-2" style="display: none;"><i class="fas fa-check-circle me-2"></i>Hoàn Thành Tư Vấn</button>
             </div>
 
-            <h4 class="mt-4 mb-3 text-primary">Tư vấn với Bệnh nhân</h4>
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="chat-box" style="height: 300px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px;" id="messageHistory">
-                        <p class="text-muted text-center">Chưa có tin nhắn nào. Bắt đầu cuộc tư vấn!</p>
+            <div id="statisticsSection" style="display: none;">
+                <h3 class="mb-4 text-primary">Thống kê chung</h3>
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card shadow-sm border-0 h-100 bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="fas fa-calendar-check me-2"></i>Tư vấn hoàn thành hôm nay</h5>
+                                <p class="card-text fs-3 fw-bold" id="consultationsToday">0</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Nhập tin nhắn tư vấn..." id="messageInput">
-                        <button class="btn btn-primary" id="sendMessageBtn"><i class="fas fa-paper-plane me-2"></i>Gửi</button>
                     </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addPatientModalLabel">Thêm bệnh nhân mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPatientForm">
+                        <div class="mb-3">
+                            <label for="newPatientName" class="form-label">Tên bệnh nhân</label>
+                            <input type="text" class="form-control" id="newPatientName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientEmail" class="form-label">Email bệnh nhân</label>
+                            <input type="email" class="form-control" id="newPatientEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientPassword" class="form-label">Mật khẩu (mặc định)</label>
+                            <input type="password" class="form-control" id="newPatientPassword" value="password" required>
+                            <small class="form-text text-muted">Mật khẩu mặc định cho bệnh nhân.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientDob" class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" id="newPatientDob">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientGender" class="form-label">Giới tính</label>
+                            <select class="form-select" id="newPatientGender">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientContact" class="form-label">Liên hệ</label>
+                            <input type="text" class="form-control" id="newPatientContact">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPatientAddress" class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-control" id="newPatientAddress">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Thêm bệnh nhân</button>
+                    </form>
                 </div>
             </div>
-            <button id="updateHealthDataBtn" class="btn btn-success mt-3"><i class="fas fa-sync-alt me-2"></i>Cập nhật Dữ liệu Sức khỏe</button>
-            <button id="completeConsultationBtn" class="btn btn-info mt-3 ms-2" style="display: none;"><i class="fas fa-check-circle me-2"></i>Hoàn Thành Tư Vấn</button>
         </div>
-        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="doctor.js"></script>
 </body>
-
 </html>
