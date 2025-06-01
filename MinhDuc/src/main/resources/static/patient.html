@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,40 +12,63 @@
             min-height: 100vh;
             background-color: #f8f9fa;
         }
+
         .main-content {
             background-color: #fff;
             min-height: 100vh;
         }
+
         .health-card {
             transition: transform 0.2s;
             border-left: 4px solid #007bff;
         }
+
         .health-card:hover {
             transform: translateY(-5px);
         }
-        .vital-normal { color: #28a745; }
-        .vital-warning { color: #ffc107; }
-        .vital-danger { color: #dc3545; }
+
+        .vital-normal {
+            color: #28a745;
+        }
+
+        .vital-warning {
+            color: #ffc107;
+        }
+
+        .vital-danger {
+            color: #dc3545;
+        }
+
         .doctor-card {
             transition: all 0.3s ease;
             cursor: pointer;
         }
+
         .doctor-card:hover {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }
+
         .consultation-history {
             max-height: 400px;
             overflow-y: auto;
         }
+
         .payment-card {
             background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
         }
-        .status-pending { color: #ffc107; }
-        .status-completed { color: #28a745; }
+
+        .status-pending {
+            color: #ffc107;
+        }
+
+        .status-completed {
+            color: #28a745;
+        }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -65,12 +89,12 @@
             <div class="col-md-2 sidebar p-3">
                 <div class="d-flex flex-column">
                     <div class="text-center mb-4">
-                        <img src="https://via.placeholder.com/80x80/ffffff/6c757d?text=NTM" 
-                             class="rounded-circle mb-2" alt="Hồ sơ">
+                        <img src="https://via.placeholder.com/80x80/ffffff/6c757d?text=NTM" class="rounded-circle mb-2"
+                            alt="Hồ sơ">
                         <h6 id="sidebar-patient-name">Nguyễn Thị Mai</h6>
                         <small>Mã bệnh nhân: #12345</small>
                     </div>
-                    
+
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item mb-2">
                             <a class="nav-link active" href="#dashboard" onclick="showSection('dashboard')">
@@ -229,7 +253,8 @@
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span>Cholesterol</span>
-                                            <span id="hospital-cholesterol" class="vital-normal"><strong>180 mg/dL</strong></span>
+                                            <span id="hospital-cholesterol" class="vital-normal"><strong>180
+                                                    mg/dL</strong></span>
                                         </div>
                                         <div class="progress" style="height: 5px;">
                                             <div class="progress-bar bg-success" style="width: 70%"></div>
@@ -238,7 +263,8 @@
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span>Đường huyết</span>
-                                            <span id="hospital-blood-sugar" class="vital-warning"><strong>140 mg/dL</strong></span>
+                                            <span id="hospital-blood-sugar" class="vital-warning"><strong>140
+                                                    mg/dL</strong></span>
                                         </div>
                                         <div class="progress" style="height: 5px;">
                                             <div class="progress-bar bg-warning" style="width: 85%"></div>
@@ -247,7 +273,8 @@
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span>Hemoglobin</span>
-                                            <span id="hospital-hemoglobin" class="vital-normal"><strong>14.5 g/dL</strong></span>
+                                            <span id="hospital-hemoglobin" class="vital-normal"><strong>14.5
+                                                    g/dL</strong></span>
                                         </div>
                                         <div class="progress" style="height: 5px;">
                                             <div class="progress-bar bg-success" style="width: 90%"></div>
@@ -441,7 +468,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Lý do tư vấn</label>
-                            <textarea class="form-control" rows="3" placeholder="Mô tả ngắn gọn vấn đề..." required></textarea>
+                            <textarea class="form-control" rows="3" placeholder="Mô tả ngắn gọn vấn đề..."
+                                required></textarea>
                         </div>
                     </form>
                 </div>
@@ -497,381 +525,137 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // Shared data structure (simulated database)
-        const sharedData = {
-            patients: [
-                {
-                    id: 1,
-                    name: "Nguyễn Thị Mai",
-                    age: 35,
-                    phone: "0912345678",
-                    patientId: "#12345",
-                    healthData: {
-                        temperature: 37.2,
-                        heartRate: 85,
-                        bloodPressure: "130/90",
-                        bmi: 28.5,
-                        cholesterol: 180,
-                        bloodSugar: 140,
-                        hemoglobin: 14.5,
-                        history: [
-                            { date: "2025-05-29 08:00", temp: 37.2, hr: 85, bp: "130/90", note: "Sốt nhẹ" },
-                            { date: "2025-05-28 20:00", temp: 36.8, hr: 78, bp: "125/85", note: "Bình thường" },
-                            { date: "2025-05-28 12:00", temp: 36.5, hr: 72, bp: "120/80", note: "Ổn định" }
-                        ]
-                    },
-                    consultations: [
-                        { id: 1, date: "2025-05-25", doctor: "BS. Nguyễn Văn A", type: "Kiểm tra định kỳ", status: "completed", fee: 50, request: "Đau đầu kéo dài 3 ngày, kèm theo sốt nhẹ" },
-                        { id: 2, date: "2025-05-15", doctor: "BS. Trần Thị B", type: "Tái khám", status: "completed", fee: 75 }
-                    ],
-                    payments: [
-                        { id: 1, date: "2025-05-25", description: "Tư vấn định kỳ", doctor: "BS. Nguyễn Văn A", amount: 50, status: "paid" },
-                        { id: 2, date: "2025-06-05", description: "Tư vấn tim mạch", doctor: "BS. Trần Thị B", amount: 75, status: "pending" }
-                    ],
-                    medications: [
-                        { name: "Lisinopril", dosage: "10mg", frequency: "Một lần/ngày", doctor: "BS. Nguyễn Văn A", status: "active" },
-                        { name: "Metformin", dosage: "500mg", frequency: "Hai lần/ngày", doctor: "BS. Trần Thị B", status: "active" }
-                    ],
-                    paymentMethods: [
-                        { cardNumber: "**** **** **** 1234", expiry: "12/26", isPrimary: true }
-                    ]
-                }
-            ],
-            doctors: [
-                { id: 1, name: "BS. Nguyễn Văn A", specialty: "Nội tổng quát", fee: 50, rating: 4.8 },
-                { id: 2, name: "BS. Trần Thị B", specialty: "Tim mạch", fee: 75, rating: 4.9 },
-                { id: 3, name: "BS. Lê Văn C", specialty: "Da liễu", fee: 60, rating: 4.7 }
-            ]
-        };
+        let currentPatientId = 3;
 
-        let currentPatientId = 1; // Assuming Nguyễn Thị Mai is logged in
-
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeDashboard();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeDashboard();
             showSection('dashboard');
         });
 
-        function initializeDashboard() {
-            const patient = sharedData.patients.find(p => p.id === currentPatientId);
-            if (!patient) return;
-
-            // Update UI with patient data
-            document.getElementById('patient-name').textContent = patient.name;
-            document.getElementById('sidebar-patient-name').textContent = patient.name;
-            document.getElementById('total-consultations').textContent = patient.consultations.length;
-            document.getElementById('pending-bills').textContent = patient.payments.filter(p => p.status !== 'paid').length;
-            document.getElementById('upcoming-appointments').textContent = patient.consultations.filter(c => c.status === 'pending').length;
-
-            // Update health status
-            updateHealthStatus(patient);
-            updateRecentActivity(patient);
-            updateNextAppointment(patient);
-            populateDoctors();
-            updateConsultationHistory(patient);
-            updatePaymentHistory(patient);
-            updatePaymentSummary(patient);
-            updatePaymentMethods(patient);
-            populateDoctorSelect();
-        }
-
         function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.add('d-none');
-            });
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('d-none'));
             document.getElementById(sectionId).classList.remove('d-none');
 
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
         }
 
+        async function initializeDashboard() {
+            const patient = await fetchPatient(currentPatientId);
+            updateHealthStatus(patient);
+            await populateDoctors();
+            await updateConsultationHistory(currentPatientId);
+            await populateDoctorSelect();
+        }
+
+        async function fetchPatient(patientId) {
+            const res = await fetch(`/api/patients/${patientId}`);
+            if (!res.ok) throw new Error('Không thể tải thông tin bệnh nhân');
+            return await res.json();
+        }
+
         function updateHealthStatus(patient) {
-            document.getElementById('hospital-temperature').textContent = `${patient.healthData.temperature}°C`;
-            document.getElementById('hospital-heart-rate').textContent = `${patient.healthData.heartRate} BPM`;
-            document.getElementById('hospital-blood-pressure').textContent = patient.healthData.bloodPressure;
-            document.getElementById('hospital-bmi').textContent = patient.healthData.bmi;
-            document.getElementById('hospital-cholesterol').textContent = `${patient.healthData.cholesterol} mg/dL`;
-            document.getElementById('hospital-blood-sugar').textContent = `${patient.healthData.bloodSugar} mg/dL`;
-            document.getElementById('hospital-hemoglobin').textContent = `${patient.healthData.hemoglobin} g/dL`;
+            const latest = patient.latestHealthData || {};
 
-            // Update vital colors
-            document.getElementById('hospital-temperature').className = patient.healthData.temperature > 37.5 ? 'vital-danger' : patient.healthData.temperature > 37.0 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-heart-rate').className = patient.healthData.heartRate > 100 || patient.healthData.heartRate < 60 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-blood-pressure').className = parseInt(patient.healthData.bloodPressure.split('/')[0]) > 140 ? 'vital-danger' : parseInt(patient.healthData.bloodPressure.split('/')[0]) > 130 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-bmi').className = patient.healthData.bmi > 25 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-cholesterol').className = patient.healthData.cholesterol > 200 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-blood-sugar').className = patient.healthData.bloodSugar > 140 ? 'vital-warning' : 'vital-normal';
-            document.getElementById('hospital-hemoglobin').className = patient.healthData.hemoglobin < 12 ? 'vital-warning' : 'vital-normal';
-
-            // Update medications
-            const medTable = document.getElementById('hospital-medications');
-            medTable.innerHTML = '';
-            patient.medications.forEach(med => {
-                medTable.innerHTML += `
-                    <tr>
-                        <td>${med.name}</td>
-                        <td>${med.dosage}</td>
-                        <td>${med.frequency}</td>
-                        <td>${med.doctor}</td>
-                        <td><span class="badge bg-${med.status === 'active' ? 'success' : 'warning'}">${med.status === 'active' ? 'Đang dùng' : 'Cần xem lại'}</span></td>
-                    </tr>
-                `;
-            });
+            document.getElementById('hospital-blood-pressure').textContent = latest.bloodPressure ?? 'N/A';
+            document.getElementById('hospital-heart-rate').textContent = latest.heartRate ? `${latest.heartRate} BPM` : 'N/A';
+            document.getElementById('hospital-temperature').textContent = latest.temperature ? `${latest.temperature}°C` : 'N/A';
+            document.getElementById('hospital-bmi').textContent = patient.bmi ?? 'Chưa có';
         }
 
-        function updateRecentActivity(patient) {
-            const activityList = document.getElementById('recent-activity');
-            activityList.innerHTML = '';
-            const recentConsultations = patient.consultations.slice(0, 3);
-            recentConsultations.forEach(consult => {
-                activityList.innerHTML += `
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>Tư vấn với ${consult.doctor}</strong>
-                            <br><small class="text-muted">${consult.type} - ${consult.date}</small>
-                        </div>
-                        <span class="badge bg-${consult.status === 'completed' ? 'success' : 'warning'}">${consult.status === 'completed' ? 'Đã hoàn thành' : 'Chờ xử lý'}</span>
-                    </div>
-                `;
-            });
-        }
+        async function populateDoctors() {
+            const res = await fetch('/api/doctors');
+            const doctors = await res.json();
 
-        function updateNextAppointment(patient) {
-            const nextApt = document.getElementById('next-appointment');
-            const upcoming = patient.consultations.find(c => c.status === 'pending');
-            if (upcoming) {
-                nextApt.innerHTML = `
-                    <h3 class="text-primary">${upcoming.date}</h3>
-                    <p>${upcoming.doctor} - ${upcoming.type}<br>
-                    <small class="text-muted">10:30 AM</small></p>
-                    <button class="btn btn-outline-primary btn-sm">Xem chi tiết</button>
-                `;
-            }
-        }
-
-        function populateDoctors() {
             const doctorList = document.getElementById('doctor-list');
             doctorList.innerHTML = '';
-            sharedData.doctors.forEach(doctor => {
+            doctors.forEach(doctor => {
                 doctorList.innerHTML += `
-                    <div class="col-md-4 mb-3">
-                        <div class="card doctor-card" onclick="requestConsultation('${doctor.name}')">
-                            <div class="card-body text-center">
-                                <img src="https://via.placeholder.com/80x80/007bff/ffffff?text=${doctor.name[0]}" 
-                                     class="rounded-circle mb-3" alt="${doctor.name}">
-                                <h5>${doctor.name}</h5>
-                                <p class="text-muted">${doctor.specialty}</p>
-                                <div class="mb-2">
-                                    <small><i class="fas fa-star text-warning"></i> ${doctor.rating} (${Math.floor(Math.random() * 100)} đánh giá)</small>
-                                </div>
-                                <button class="btn btn-outline-primary btn-sm">Tư vấn ngay - $${doctor.fee}</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function updateConsultationHistory(patient) {
-            const consultTable = document.getElementById('consultation-history');
-            consultTable.innerHTML = '';
-            patient.consultations.forEach(consult => {
-                consultTable.innerHTML += `
-                    <tr>
-                        <td>${consult.date}</td>
-                        <td>${consult.doctor}</td>
-                        <td>${consult.type}</td>
-                        <td><span class="badge bg-${consult.status === 'completed' ? 'success' : 'warning'}">${consult.status === 'completed' ? 'Đã hoàn thành' : 'Chờ xử lý'}</span></td>
-                        <td>$${consult.fee}</td>
-                        <td><button class="btn btn-sm btn-outline-info" onclick="viewConsultation(${consult.id})">Xem báo cáo</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function updatePaymentHistory(patient) {
-            const paymentTable = document.getElementById('payment-history');
-            paymentTable.innerHTML = '';
-            patient.payments.forEach(payment => {
-                paymentTable.innerHTML += `
-                    <tr>
-                        <td>${payment.date}</td>
-                        <td>${payment.description}</td>
-                        <td>${payment.doctor}</td>
-                        <td>$${payment.amount}</td>
-                        <td><span class="badge bg-${payment.status === 'paid' ? 'success' : payment.status === 'pending' ? 'warning' : 'danger'}">${payment.status === 'paid' ? 'Đã thanh toán' : payment.status === 'pending' ? 'Chờ xử lý' : 'Quá hạn'}</span></td>
-                        <td>
-                            ${payment.status !== 'paid' ? 
-                                `<button class="btn btn-sm btn-primary" onclick="payBill(${payment.id}, ${payment.amount}, '${payment.description}')">Thanh toán</button>` : 
-                                `<button class="btn btn-sm btn-outline-info">Biên lai</button>`}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function updatePaymentSummary(patient) {
-            const pending = patient.payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0);
-            const overdue = patient.payments.filter(p => p.status === 'overdue').reduce((sum, p) => sum + p.amount, 0);
-            document.getElementById('total-outstanding').textContent = `$${pending + overdue}`;
-            document.getElementById('pending-amount').textContent = `$${pending}`;
-            document.getElementById('overdue-amount').textContent = `$${overdue}`;
-        }
-
-        function updatePaymentMethods(patient) {
-            const paymentMethods = document.getElementById('payment-methods');
-            paymentMethods.innerHTML = '';
-            patient.paymentMethods.forEach(method => {
-                paymentMethods.innerHTML += `
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6><i class="fas fa-credit-card text-primary"></i> ${method.cardNumber}</h6>
-                                        <small class="text-muted">Hết hạn ${method.expiry}</small>
-                                    </div>
-                                    ${method.isPrimary ? '<span class="badge bg-success">Chính</span>' : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            paymentMethods.innerHTML += `
-                <div class="col-md-6">
-                    <div class="card">
+                <div class="col-md-4 mb-3">
+                    <div class="card doctor-card" onclick="sendConsultationRequest(${doctor.id})">
                         <div class="card-body text-center">
-                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">
-                                <i class="fas fa-plus-circle"></i><br>Thêm phương thức thanh toán
-                            </button>
+                            <img src="https://via.placeholder.com/80x80/007bff/ffffff?text=${doctor.name[0]}" 
+                                 class="rounded-circle mb-3" alt="${doctor.name}">
+                            <h5>${doctor.name}</h5>
+                            <p class="text-muted">${doctor.specialty || ''}</p>
+                            <button class="btn btn-outline-primary btn-sm">Yêu cầu tư vấn</button>
                         </div>
                     </div>
-                </div>
-            `;
-        }
-
-        function populateDoctorSelect() {
-            const doctorSelect = document.getElementById('doctorSelect');
-            doctorSelect.innerHTML = '<option value="">Chọn bác sĩ...</option>';
-            sharedData.doctors.forEach(doctor => {
-                doctorSelect.innerHTML += `<option value="${doctor.name} - $${doctor.fee}">${doctor.name} - ${doctor.specialty} ($${doctor.fee})</option>`;
+                </div>`;
             });
         }
 
-        function requestConsultation(doctorName) {
-            document.getElementById('doctorSelect').value = sharedData.doctors.find(d => d.name === doctorName).name + ` - $${sharedData.doctors.find(d => d.name === doctorName).fee}`;
-            new bootstrap.Modal(document.getElementById('consultationModal')).show();
+        async function populateDoctorSelect() {
+            const res = await fetch('/api/doctors');
+            const doctors = await res.json();
+
+            const select = document.getElementById('doctorSelect');
+            select.innerHTML = '<option value="">Chọn bác sĩ...</option>';
+            doctors.forEach(d => {
+                select.innerHTML += `<option value="${d.id}">${d.name} - ${d.specialty ?? ''}</option>`;
+            });
         }
 
-        function submitConsultation() {
-            const form = document.getElementById('consultationForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const doctor = document.getElementById('doctorSelect').value.split(' - ')[0];
-            const type = form.querySelector('select:nth-child(2)').value;
-            const date = form.querySelector('input[type="date"]').value;
-            const time = form.querySelector('select:nth-child(4)').value;
-            const reason = form.querySelector('textarea').value;
-
-            const patient = sharedData.patients.find(p => p.id === currentPatientId);
-            const consultationId = patient.consultations.length + 1;
-            const newConsultation = {
-                id: consultationId,
-                date,
-                doctor,
-                type,
-                status: 'pending',
-                fee: parseInt(document.getElementById('doctorSelect').value.split('$')[1]),
-                request: reason
+        async function sendConsultationRequest(doctorId) {
+            const payload = {
+                doctorId: doctorId,
+                patientId: currentPatientId
             };
-            patient.consultations.push(newConsultation);
 
-            // Add corresponding payment
-            patient.payments.push({
-                id: patient.payments.length + 1,
-                date,
-                description: `Tư vấn ${type}`,
-                doctor,
-                amount: newConsultation.fee,
-                status: 'pending'
+            const res = await fetch('/api/consultations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            alert('Yêu cầu tư vấn đã được gửi!');
-            bootstrap.Modal.getInstance(document.getElementById('consultationModal')).hide();
-            form.reset();
-            initializeDashboard();
-        }
-
-        function payBill(paymentId, amount, description) {
-            if (confirm(`Xác nhận thanh toán $${amount} cho ${description}?`)) {
-                const patient = sharedData.patients.find(p => p.id === currentPatientId);
-                const payment = patient.payments.find(p => p.id === paymentId);
-                payment.status = 'paid';
-                alert(`Thanh toán $${amount} cho ${description} thành công!`);
-                initializeDashboard();
+            if (res.ok) {
+                alert('Yêu cầu tư vấn đã được gửi thành công!');
+                await updateConsultationHistory(currentPatientId); // Cập nhật lịch sử
+                await populateDoctors(); // Làm mới danh sách bác sĩ (nếu muốn cập nhật giao diện)
+            } else {
+                alert('Lỗi khi gửi yêu cầu tư vấn.');
             }
         }
 
-        function payAll() {
-            const patient = sharedData.patients.find(p => p.id === currentPatientId);
-            const total = patient.payments.filter(p => p.status !== 'paid').reduce((sum, p) => sum + p.amount, 0);
-            if (total === 0) {
-                alert('Không có hóa đơn nào cần thanh toán!');
-                return;
-            }
-            if (confirm(`Xác nhận thanh toán $${total} cho tất cả hóa đơn chưa thanh toán?`)) {
-                patient.payments.forEach(p => {
-                    if (p.status !== 'paid') p.status = 'paid';
-                });
-                alert('Tất cả hóa đơn đã được thanh toán!');
-                initializeDashboard();
-            }
-        }
 
-        function addPaymentMethod() {
-            const form = document.getElementById('paymentMethodForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+        async function updateConsultationHistory(patientId) {
+            const res = await fetch(`/api/patients/${patientId}/consultations`);
+            const consultations = await res.json();
 
-            const patient = sharedData.patients.find(p => p.id === currentPatientId);
-            const cardNumber = form.querySelector('input[placeholder="1234 5678 9012 3456"]').value.slice(-4);
-            const expiry = form.querySelector('input[placeholder="MM/YY"]').value;
-            const isPrimary = form.querySelector('input[type="checkbox"]').checked;
-
-            patient.paymentMethods.forEach(m => m.isPrimary = false);
-            patient.paymentMethods.push({
-                cardNumber: `**** **** **** ${cardNumber}`,
-                expiry,
-                isPrimary
+            const table = document.getElementById('consultation-history');
+            table.innerHTML = '';
+            consultations.forEach(c => {
+                table.innerHTML += `
+                <tr>
+                    <td>${c.date}</td>
+                    <td>${c.doctorName}</td>
+                    <td>${c.type || 'Tư vấn'}</td>
+                    <td><span class="badge bg-${getStatusColor(c.status)}">${c.status}</span></td>
+                    <td>$${c.fee ?? '0'}</td>
+                    <td><button class="btn btn-sm btn-outline-info">Chi tiết</button></td>
+                </tr>`;
             });
-
-            alert('Phương thức thanh toán đã được thêm!');
-            bootstrap.Modal.getInstance(document.getElementById('paymentMethodModal')).hide();
-            form.reset();
-            initializeDashboard();
         }
 
-        function viewConsultation(consultId) {
-            const patient = sharedData.patients.find(p => p.id === currentPatientId);
-            const consult = patient.consultations.find(c => c.id === consultId);
-            alert(`Báo cáo tư vấn:\nBác sĩ: ${consult.doctor}\nNgày: ${consult.date}\nLoại: ${consult.type}\nYêu cầu: ${consult.request || 'Không có'}`);
+        function getStatusColor(status) {
+            switch (status) {
+                case 'PENDING': return 'warning';
+                case 'ACCEPTED': return 'success';
+                case 'REJECTED': return 'danger';
+                default: return 'secondary';
+            }
         }
 
         function logout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                alert('Bạn đã đăng xuất.');
-                window.location.href = 'index.html';
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                alert('Đăng xuất thành công!');
+                window.location.href = 'login.html';
             }
         }
     </script>
+
 </body>
+
 </html>

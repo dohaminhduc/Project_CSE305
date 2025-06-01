@@ -79,7 +79,7 @@
                     <div class="d-flex align-items-center">
                         <span class="me-3">Xin chào, <strong>BS. Nguyễn Văn A</strong></span>
                         <button class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            <i class="fas fa-sign-out-alt" onclick="logout()"></i> Đăng xuất
                         </button>
                     </div>
                 </div>
@@ -430,11 +430,9 @@
                 const patient = patients.find(p => p.id === currentPatientId);
                 patient.status = 'completed';
                 
-                // Close modal and refresh display
                 bootstrap.Modal.getInstance(document.getElementById('patientModal')).hide();
                 displayPatients(filteredPatients);
                 
-                // Show success message
                 alert('Đã hoàn thành tư vấn cho bệnh nhân!');
             }
         }
@@ -516,6 +514,13 @@
             } else {
                 bpElement.className = 'vital-normal';
             }
+
+            function logout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                alert('Bạn đã đăng xuất.');
+                window.location.href = 'login.html';
+            }
+        }
         }
 
         // Search functionality
