@@ -89,7 +89,7 @@
                                                 <th>Loại</th>
                                                 <th>Trạng thái</th>
                                                 <th>Phí</th>
-                                                <th>Chi tiết</th>
+                                                <th>Thanh Toán</th>
                                             </tr>
                                         </thead>
                                         <tbody id="consultation-history">
@@ -121,6 +121,40 @@
             </main>
         </div>
     </div>
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Thanh toán Tư vấn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn đang thanh toán cho tư vấn vào ngày: <strong id="paymentDate"></strong> với bác sĩ: <strong id="paymentDoctor"></strong></p>
+                <p>Số tiền cần thanh toán: <strong id="paymentAmount"></strong></p>
+                <form id="paymentForm">
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">Số thẻ</label>
+                        <input type="text" class="form-control" id="cardNumber" placeholder="**** **** **** ****" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Ngày hết hạn</label>
+                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="cvv" placeholder="***" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cardHolderName" class="form-label">Tên chủ thẻ</label>
+                        <input type="text" class="form-control" id="cardHolderName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Xác nhận Thanh toán</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="patient.js"></script>

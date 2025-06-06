@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <i class="fas fa-heartbeat text-primary me-2"></i>
-                <span class="fw-bold">HealthCare Portal</span>
+                <span class="fw-bold">Health Tracker</span>
             </a>
             <div class="d-flex ms-auto">
                 <span class="navbar-text me-3 d-none d-md-block">
@@ -76,7 +76,10 @@
                                 <h5 class="card-title text-secondary"><i class="fas fa-user-injured me-2"></i>Thông tin cơ bản</h5>
                                 <p class="mb-1"><strong>Tên:</strong> <span id="patientName"></span></p>
                                 <p class="mb-1"><strong>ID:</strong> <span id="patientId"></span></p>
-                                <p class="mb-1"><strong>Ngày sinh:</strong> <span id="patientDob"></span></p>
+                                <p class="mb-1">
+                                    <strong>Tuổi:</strong> <span id="patientAge"></span>
+                                    <small class="text-muted">(Ngày sinh: <span id="patientDob"></span>)</small>
+                                </p>
                                 <p class="mb-1"><strong>Giới tính:</strong> <span id="patientGender"></span></p>
                                 <p class="mb-1"><strong>Liên hệ:</strong> <span id="patientContact"></span></p>
                                 <p class="mb-1"><strong>Địa chỉ:</strong> <span id="patientAddress"></span></p>
@@ -113,11 +116,11 @@
                                 <th>Loại tư vấn</th>
                                 <th>Trạng thái</th>
                                 <th>Phí</th>
-                                <th>Hành động</th>
+                                <th>Thanh Toán</th>
                             </tr>
                         </thead>
                         <tbody id="consultation-history">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
 
@@ -147,7 +150,7 @@
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
             </div>
         </div>
     </div>

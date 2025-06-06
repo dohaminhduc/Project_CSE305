@@ -154,6 +154,26 @@ document.getElementById('addPatientForm').addEventListener('submit', function (e
     showPatientDetailsUI();
 });
 
+/**
+ * Calculates the age of a person based on their date of birth.
+ * @param {string} dobString - The date of birth in 'YYYY-MM-DD' format.
+ * @returns {number} The age in years, or null if dobString is invalid.
+ */
+function calculateAge(dobString) {
+    if (!dobString) {
+        return null;
+    }
+    const birthDate = new Date(dobString);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
 
 // Hàm tải và hiển thị danh sách bệnh nhân
 async function loadPatients() {
@@ -200,15 +220,15 @@ async function loadPatients() {
 
     patientsForCurrentDoctor.forEach(patient => {
         const patientCard = `
-                    <div class="col-12 mb-3">
-                        <div class="card patient-card shadow-sm" data-patient-id="${patient.id}">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">${patient.name}</h5>
-                                <p class="card-text text-muted mb-1">ID: ${patient.id}</p>
-                                <p class="card-text text-muted mb-0"><span class="badge bg-secondary">${patient.status}</span></p>
+                        <div class="col-12 mb-3">
+                            <div class="card patient-card shadow-sm" data-patient-id="${patient.id}">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1">${patient.name}</h5>
+                                    <p class="card-text text-muted mb-1">ID: ${patient.id}</p>
+                                    <p class="card-text text-muted mb-0"><span class="badge bg-secondary">${patient.status}</span></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 `;
         patientListElement.innerHTML += patientCard;
     });
@@ -258,7 +278,10 @@ async function showPatientDetails(patientId) {
     // Hiển thị thông tin bệnh nhân
     document.getElementById('patientName').textContent = patient.name;
     document.getElementById('patientId').textContent = patient.id;
-    document.getElementById('patientDob').textContent = patient.dob;
+    // Calculate and display age
+    const age = calculateAge(patient.dob);
+    document.getElementById('patientAge').textContent = age !== null ? `${age} tuổi` : 'N/A';
+    document.getElementById('patientDob').textContent = patient.dob; // Still display DOB for context
     document.getElementById('patientGender').textContent = patient.gender;
     document.getElementById('patientContact').textContent = patient.contact;
     document.getElementById('patientAddress').textContent = patient.address;
@@ -504,15 +527,15 @@ function filterPatients() {
 
     filteredPatients.forEach(patient => {
         const patientCard = `
-                    <div class="col-12 mb-3">
-                        <div class="card patient-card shadow-sm" data-patient-id="${patient.id}">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">${patient.name}</h5>
-                                <p class="card-text text-muted mb-1">ID: ${patient.id}</p>
-                                <p class="card-text text-muted mb-0"><span class="badge bg-secondary">${patient.status}</span></p>
+                        <div class="col-12 mb-3">
+                            <div class="card patient-card shadow-sm" data-patient-id="${patient.id}">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1">${patient.name}</h5>
+                                    <p class="card-text text-muted mb-1">ID: ${patient.id}</p>
+                                    <p class="card-text text-muted mb-0"><span class="badge bg-secondary">${patient.status}</span></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 `;
         patientListElement.innerHTML += patientCard;
     });
