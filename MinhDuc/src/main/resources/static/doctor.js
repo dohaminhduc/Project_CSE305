@@ -8,10 +8,7 @@ function loadInitialPatientsData() {
     if (storedPatients) {
         allPatientsData = JSON.parse(storedPatients);
     } else {
-        // Dữ liệu mặc định nếu chưa có trong localStorage
-        // Đây là DỮ LIỆU MẶC ĐỊNH CHÂN LÝ.
-        // Bất kỳ thay đổi nào về cấu trúc dữ liệu bệnh nhân HOẶC thêm/sửa/xóa bệnh nhân mặc định
-        // chỉ cần thực hiện ở đây.
+        
         allPatientsData = [
             {
                 id: 'P001',
@@ -416,12 +413,19 @@ function completeConsultation() {
     if (!consultationFound) {
         // Nếu không tìm thấy tư vấn "Đang chờ" cho ngày hôm nay từ bác sĩ này, tạo một cái mới
         if (!patient.consultationHistory) patient.consultationHistory = [];
+        // Thêm prompt để nhập phí tư vấn
+        let feeInput = prompt('Nhập phí tư vấn cho lần hoàn thành này (USD):', '0');
+        let fee = 0;
+        if (feeInput !== null) {
+            fee = parseFloat(feeInput);
+            if (isNaN(fee) || fee < 0) fee = 0;
+        }
         patient.consultationHistory.push({
             date: today,
             doctorEmail: loggedInDoctorEmail,
             type: 'Tư vấn nhanh',
             status: 'Hoàn thành',
-            fee: 0, // Có thể thêm input để nhập phí
+            fee: fee,
             notes: 'Tư vấn hoàn thành trong ngày.'
         });
     }

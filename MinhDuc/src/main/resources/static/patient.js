@@ -185,12 +185,14 @@ let allPatientsData = [];
                 const statusColor = getStatusColor(statusDisplay);
 
                 let paymentCellContent = '';
-                if (statusDisplay === 'Đang chờ') {
+                if (c.status === 'Hoàn thành' && !c.isPaid) {
                     paymentCellContent = `<button class="btn btn-sm btn-success" onclick="openPaymentModal(${index})">Thanh toán</button>`;
-                } else if (c.isPaid) { // Nếu đã được đánh dấu là đã thanh toán (và không còn là 'Đang chờ')
+                } else if (c.isPaid) {
                     paymentCellContent = `<span class="badge bg-success">Đã thanh toán</span>`;
-                } else { // Các trạng thái khác hoặc chưa thanh toán nhưng không phải 'Đang chờ'
-                    paymentCellContent = `<button class="btn btn-sm btn-outline-info" onclick="alert('Chi tiết tư vấn: ${c.notes || 'Không có ghi chú'}')">Chi tiết</button>`;
+                } else if (statusDisplay === 'Hoàn thành' && !c.isPaid) {
+                    paymentCellContent = `<span class="badge bg-danger">Chưa thanh toán</span>`;
+                } else {
+                    paymentCellContent = '';
                 }
 
 
@@ -339,3 +341,5 @@ let allPatientsData = [];
                 }
             });
         });
+
+        

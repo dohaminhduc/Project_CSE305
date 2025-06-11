@@ -38,7 +38,8 @@
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Bảng điều khiển Bệnh nhân</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="logout()">
@@ -54,8 +55,12 @@
                                 <h5 class="card-title"><i class="fas fa-heartbeat"></i> Dữ liệu sức khỏe của bạn</h5>
                                 <p><strong>Nhiệt độ:</strong> <span id="temperature" class="vital-normal">--</span></p>
                                 <p><strong>Nhịp tim:</strong> <span id="heartRate" class="vital-normal">--</span></p>
-                                <p><strong>Huyết áp:</strong> <span id="bloodPressure" class="vital-normal">--</span></p>
-                                <p class="text-muted"><small>Cập nhật lần cuối: <span id="lastUpdated">--</span></small></p>
+                                <p><strong>Huyết áp:</strong> <span id="bloodPressure" class="vital-normal">--</span>
+                                </p>
+                                <p class="text-muted"><small>Cập nhật lần cuối: <span id="lastUpdated">--</span></small>
+                                </p>
+                                <button id="updateHealthDataBtn" class="btn btn-outline-primary btn-sm mt-3"><i
+                                        class="fas fa-sync-alt me-2"></i>Cập nhật</button>
                             </div>
                         </div>
                     </div>
@@ -93,7 +98,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="consultation-history">
-                                            </tbody>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -109,9 +114,10 @@
                             </div>
                             <div class="card-body">
                                 <div class="chat-box mb-3" id="messageHistory">
-                                    </div>
+                                </div>
                                 <div class="input-group message-input-group">
-                                    <input type="text" id="messageInput" class="form-control" placeholder="Nhập tin nhắn...">
+                                    <input type="text" id="messageInput" class="form-control"
+                                        placeholder="Nhập tin nhắn...">
                                     <button class="btn btn-primary" id="sendMessageBtn">Gửi</button>
                                 </div>
                             </div>
@@ -123,41 +129,48 @@
     </div>
 
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel">Thanh toán Tư vấn</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn đang thanh toán cho tư vấn vào ngày: <strong id="paymentDate"></strong> với bác sĩ: <strong id="paymentDoctor"></strong></p>
-                <p>Số tiền cần thanh toán: <strong id="paymentAmount"></strong></p>
-                <form id="paymentForm">
-                    <div class="mb-3">
-                        <label for="cardNumber" class="form-label">Số thẻ</label>
-                        <input type="text" class="form-control" id="cardNumber" placeholder="**** **** **** ****" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="expiryDate" class="form-label">Ngày hết hạn</label>
-                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cvv" class="form-label">CVV</label>
-                        <input type="text" class="form-control" id="cvv" placeholder="***" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cardHolderName" class="form-label">Tên chủ thẻ</label>
-                        <input type="text" class="form-control" id="cardHolderName" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Xác nhận Thanh toán</button>
-                </form>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Thanh toán Tư vấn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn đang thanh toán cho tư vấn vào ngày: <strong id="paymentDate"></strong> với bác sĩ: <strong
+                            id="paymentDoctor"></strong></p>
+                    <p>Số tiền cần thanh toán: <strong id="paymentAmount"></strong></p>
+                    <form id="paymentForm">
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Số thẻ</label>
+                            <input type="text" class="form-control" id="cardNumber" placeholder="**** **** **** ****"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiryDate" class="form-label">Ngày hết hạn</label>
+                            <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cvv" placeholder="***" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardHolderName" class="form-label">Tên chủ thẻ</label>
+                            <input type="text" class="form-control" id="cardHolderName" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Xác nhận Thanh toán</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="patient.js"></script>
+
+    <script>
+        document.getElementById('updateHealthDataBtn')?.addEventListener('click', function () {
+        alert('Chức năng cập nhật dữ liệu sức khỏe (chưa được triển khai đầy đủ) sẽ được xử lý tại đây.')});
+    </script>
 </body>
 
 </html>
